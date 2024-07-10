@@ -1,0 +1,20 @@
+#!/usr/bin/env sh
+# $0 : 현재 실행 중인 스크립트의 경로를 나타낸다. husky 설정 스크립트를 로드하는 데 사용
+. "$(dirname -- "$0")/_/husky.sh"
+
+# $1 : 스크립트에 전달된 첫 번째 인자로, 커밋 메시지가 저장된 파일의 경로
+COMMIT_MESSAGE_FILE=$1
+COMMIT_MESSAGE=$(cat "$COMMIT_MESSAGE_FILE")
+
+# emoji가 제일 처음에 들어오도록 설정
+if ! echo "$COMMIT_MESSAGE" | grep -qE "^:[^ ]+:.+"; then
+  echo "💕 Please use gitmoji in your commit message"
+  exit 1
+fi
+  # emoji 다음 첫 글자는 대문자가 오도록 설정
+if ! echo "$COMMIT_MESSAGE" | grep -qE "^:[^ ]+: [A-Z].+"; then
+  echo "💥 The first letter after the emoji must be capitalized"
+  exit 1
+fi
+
+echo "🔆 Thanks for keeping the convention 🔆"
