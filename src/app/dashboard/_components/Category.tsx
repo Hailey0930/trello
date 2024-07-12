@@ -1,3 +1,5 @@
+import { PlusOutlined } from "@ant-design/icons";
+
 import { Category as ICategory } from "@/app/_types/Category";
 
 interface Props {
@@ -11,9 +13,10 @@ function Category({ category }: Props) {
       <footer className="p-2">
         <button
           type="button"
-          className="text-sm bg-sky-300 text-white px-2 py-1 rounded-lg"
+          className="flex items-center gap-2 text-sm bg-sky-300 text-white px-2 py-1 rounded-lg"
         >
-          Add Card
+          <PlusOutlined />
+          <div> Add Card</div>
         </button>
       </footer>
     </div>
