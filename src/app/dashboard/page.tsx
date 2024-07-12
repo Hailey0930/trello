@@ -1,3 +1,4 @@
+import { Input } from "antd";
 import { categoryRepository } from "../_data/categoryRepository";
 import Category from "./_components/Category";
 
@@ -13,6 +14,13 @@ function DashboardPage() {
         {categoryList.map((category) => (
           <Category key={category.id} category={category} />
         ))}
+
+        <div className="w-272 bg-gray-100 rounded-lg p-2">
+          <h1 className="font-medium">Add Category</h1>
+          <footer className="p-2">
+            <Input placeholder="Category name" />
+          </footer>
+        </div>
       </div>
     </div>
   );
