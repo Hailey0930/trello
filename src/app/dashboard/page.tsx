@@ -1,10 +1,7 @@
-import { Category } from "../_types/Category";
+import { categoryRepository } from "../_data/categoryRepository";
 
 function DashboardPage() {
-  const categoryList: Category[] = [
-    { id: "1", title: "title", cards: [] },
-    { id: "1", title: "title2", cards: [] },
-  ];
+  const categoryList = categoryRepository.getAll();
 
   return (
     <div className="flex">
