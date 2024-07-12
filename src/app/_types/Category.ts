@@ -1,4 +1,4 @@
-import { Card } from "./Card.types";
+import { Card } from "./Card";
 
 export interface Category {
   id: string;
