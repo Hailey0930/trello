@@ -7,7 +7,7 @@ export interface CategoryRepository {
 const getAll = () => {
   return [
     { id: "1", title: "title", cards: [] },
-    { id: "1", title: "title2", cards: [] },
+    { id: "2", title: "title2", cards: [] },
   ];
 };
 

@@ -1,4 +1,5 @@
 import { categoryRepository } from "../_data/categoryRepository";
+import Category from "./_components/Category";
 
 function DashboardPage() {
   const categoryList = categoryRepository.getAll();
@@ -8,14 +9,9 @@ function DashboardPage() {
       <header className="h-14 bg-sky-400 flex items-center pl-5 text-white">
         <div>Dashboard</div>
       </header>
-      <div>
+      <div className="p-3 flex gap-2">
         {categoryList.map((category) => (
-          <div
-            key={category.id}
-            className="w-1/2 border-solid border-2 border-sky-500"
-          >
-            {category.title}
-          </div>
+          <Category key={category.id} category={category} />
         ))}
       </div>
     </div>
