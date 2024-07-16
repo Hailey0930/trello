@@ -1,14 +1,12 @@
 import { Category } from "../_types/Category";
+import mockCategoryList from "./mock/categoryFactory";
 
 export interface CategoryRepository {
   getAll: () => Category[];
 }
 
 const getAll = () => {
-  return [
-    { id: "1", title: "title", cards: [] },
-    { id: "2", title: "title2", cards: [] },
-  ];
+  return mockCategoryList;
 };
 
 export const categoryRepository: CategoryRepository = {
