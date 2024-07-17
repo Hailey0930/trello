@@ -10,15 +10,39 @@ import useClickOutside from "./_hooks/useClickOutside";
 
 function DashboardPage() {
   const [categoryList, setCategoryList] = useState<ICategory[]>([]);
+  const [isAddingCategory, setIsAddingCategory] = useState(false);
+  const [newCategory, setNewCategory] = useState("");
+
   const addCategoryBoxRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setCategoryList(categoryRepository.getAll());
   }, []);
 
-  const [isAddingCategory, setIsAddingCategory] = useState(false);
-
   useClickOutside(setIsAddingCategory, addCategoryBoxRef);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewCategory(e.target.value);
+  };
+
+  const handleSaveCategory = () => {
+    setCategoryList((prev) => {
+      const newCategoryList = [...prev];
+
+      const tempCategory: ICategory = {
+        id: (newCategoryList.length + 1).toString(),
+        title: newCategory,
+        cards: [],
+      };
+
+      newCategoryList.push(tempCategory);
+
+      return newCategoryList;
+    });
+
+    setIsAddingCategory(false);
+    setNewCategory("");
+  };
 
   return (
     <div>
@@ -34,11 +58,17 @@ function DashboardPage() {
           {isAddingCategory ? (
             <div ref={addCategoryBoxRef}>
               <h1>Add category</h1>
-              <Input placeholder="Category name" autoFocus />
+              <Input
+                placeholder="Category name"
+                autoFocus
+                onChange={handleInputChange}
+                value={newCategory}
+              />
               <div>
                 <button
                   type="button"
                   className="bg-green-500 text-white rounded-lg p-2"
+                  onClick={handleSaveCategory}
                 >
                   Save
                 </button>
