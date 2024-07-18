@@ -6,14 +6,10 @@ import {
 } from "@ant-design/icons";
 import { Input } from "antd";
 import { ChangeEvent, useRef, useState } from "react";
-import { Category as ICategory } from "@/app/_types/Category";
+import { CategoryProps } from "@/app/_types/Category";
 import useClickOutside from "../_hooks/useClickOutside";
 
-interface Props {
-  category: ICategory;
-}
-
-function Category({ category }: Props) {
+function Category({ category }: CategoryProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [newCategoryTitle, setNewCategoryTitle] = useState(category.title);
 
