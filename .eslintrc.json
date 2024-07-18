@@ -36,6 +36,7 @@
       }
     ],
     "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
-    "import/no-cycle": "off"
+    "import/no-cycle": "off",
+    "jsx-a11y/control-has-associated-label": "off"
   }
 }
