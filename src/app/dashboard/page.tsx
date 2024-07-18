@@ -11,7 +11,7 @@ import useClickOutside from "./_hooks/useClickOutside";
 function DashboardPage() {
   const [categoryList, setCategoryList] = useState<ICategory[]>([]);
   const [isAddingCategory, setIsAddingCategory] = useState(false);
-  const [newCategory, setNewCategory] = useState("");
+  const [newCategoryTitle, setNewCategoryTitle] = useState("");
 
   const addCategoryBoxRef = useRef<HTMLDivElement>(null);
 
@@ -27,26 +27,17 @@ function DashboardPage() {
   useClickOutside(setIsAddingCategory, addCategoryBoxRef);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewCategory(e.target.value);
+    setNewCategoryTitle(e.target.value);
   };
 
-  const handleSaveCategory = () => {
-    setCategoryList((prev) => {
-      const newCategoryList = [...prev];
+  const handleSaveCategory = async () => {
+    if (newCategoryTitle.trim() === "") return;
 
-      const tempCategory: ICategory = {
-        id: (newCategoryList.length + 1).toString(),
-        title: newCategory,
-        cards: [],
-      };
-
-      newCategoryList.push(tempCategory);
-
-      return newCategoryList;
-    });
+    const newCategory = await categoryRepository.addCategory(newCategoryTitle);
+    setCategoryList((prev) => [...prev, newCategory]);
 
     setIsAddingCategory(false);
-    setNewCategory("");
+    setNewCategoryTitle("");
   };
 
   return (
@@ -69,7 +60,7 @@ function DashboardPage() {
               placeholder="Category name"
               autoFocus
               onChange={handleInputChange}
-              value={newCategory}
+              value={newCategoryTitle}
             />
             <div className="flex items-center gap-2">
               <button
