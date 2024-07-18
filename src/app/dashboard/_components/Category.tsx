@@ -1,20 +1,71 @@
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-
+import {
+  CheckOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
+import { Input } from "antd";
+import { ChangeEvent, useRef, useState } from "react";
 import { Category as ICategory } from "@/app/_types/Category";
+import useClickOutside from "../_hooks/useClickOutside";
 
 interface Props {
   category: ICategory;
 }
 
 function Category({ category }: Props) {
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [newCategoryTitle, setNewCategoryTitle] = useState(category.title);
+
+  const editTitleInputRef = useRef<HTMLDivElement>(null);
+
+  useClickOutside(setIsEditingTitle, editTitleInputRef);
+
+  const handleEdit = () => {
+    setIsEditingTitle(true);
+  };
+
+  const handleEditFinish = () => {
+    setIsEditingTitle(false);
+  };
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setNewCategoryTitle(e.target.value);
+  };
+
   return (
     <div className="w-272 h-fit bg-gray-100 rounded-lg p-2">
-      <div className="flex items-center justify-between">
-        <h1 className="font-medium px-2">{category.title}</h1>
+      <div
+        className="flex items-center justify-between"
+        ref={editTitleInputRef}
+      >
+        {isEditingTitle ? (
+          <Input
+            autoFocus
+            onChange={handleInputChange}
+            value={newCategoryTitle}
+          />
+        ) : (
+          <h1 className="font-medium px-2">{category.title}</h1>
+        )}
         <div className="flex items-center gap-1">
-          <button type="button" className="rounded-full px-1 hover:bg-gray-200">
-            <EditOutlined style={{ color: "#5c5b5b" }} />
-          </button>
+          {isEditingTitle ? (
+            <button
+              type="button"
+              className="rounded-full px-1 hover:bg-gray-200"
+              onClick={handleEditFinish}
+            >
+              <CheckOutlined style={{ color: "#5c5b5b" }} />
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="rounded-full px-1 hover:bg-gray-200"
+              onClick={handleEdit}
+            >
+              <EditOutlined style={{ color: "#5c5b5b" }} />
+            </button>
+          )}
           <button type="button" className="rounded-full px-1 hover:bg-gray-200">
             <DeleteOutlined style={{ color: "#5c5b5b" }} />
           </button>
