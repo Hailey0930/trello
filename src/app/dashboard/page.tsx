@@ -2,12 +2,11 @@
 
 import { Input } from "antd";
 import { useEffect, useRef, useState } from "react";
-
+import { PlusOutlined } from "@ant-design/icons";
 import { categoryRepository } from "../_data/categoryRepository";
 import Category from "./_components/Category";
 import { Category as ICategory } from "../_types/Category";
 import useClickOutside from "./_hooks/useClickOutside";
-import { PlusOutlined } from "@ant-design/icons";
 
 function DashboardPage() {
   const [categoryList, setCategoryList] = useState<ICategory[]>([]);
@@ -17,7 +16,12 @@ function DashboardPage() {
   const addCategoryBoxRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setCategoryList(categoryRepository.getAll());
+    const fetchCategories = async () => {
+      const categories = await categoryRepository.getAll();
+      setCategoryList(categories);
+    };
+
+    fetchCategories();
   }, []);
 
   useClickOutside(setIsAddingCategory, addCategoryBoxRef);
