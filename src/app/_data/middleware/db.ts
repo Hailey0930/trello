@@ -1,19 +1,38 @@
-import { CategoryDBSchema } from "@/app/_types/Category";
-import { IDBPDatabase, openDB } from "idb";
+import { Card } from "@/app/_types/Card";
+import { Category } from "@/app/_types/Category";
+import { DBSchema, IDBPDatabase, openDB } from "idb";
+import {
+  CARD_STORE_NAME,
+  CATEGORY_STORE_NAME,
+} from "@/app/_constant/constants";
 
-export const CATEGORY_DB_NAME = "categoryDB";
-export const CATEGORY_STORE_NAME = "categories";
+export const DB_NAME = "trelloDB";
 
-export const initializeCategoryDB = async (): Promise<
-  IDBPDatabase<CategoryDBSchema>
-> => {
-  const categoryDB = await openDB<CategoryDBSchema>(CATEGORY_DB_NAME, 1, {
+export interface TrelloDBSchema extends DBSchema {
+  categories: {
+    key: string;
+    value: Category;
+    indexes: { "by-title": string };
+  };
+  cards: {
+    key: string;
+    value: Card;
+    indexes: { "by-categoryId": string };
+  };
+}
+
+export const initializeDB = async (
+  storeNames: (typeof CATEGORY_STORE_NAME | typeof CARD_STORE_NAME)[],
+): Promise<IDBPDatabase<TrelloDBSchema>> => {
+  const initializedDB = await openDB<TrelloDBSchema>(DB_NAME, 1, {
     upgrade(db) {
-      if (!db.objectStoreNames.contains(CATEGORY_STORE_NAME)) {
-        db.createObjectStore(CATEGORY_STORE_NAME, { keyPath: "id" });
-      }
+      storeNames.forEach((storeName) => {
+        if (!db.objectStoreNames.contains(storeName)) {
+          db.createObjectStore(storeName, { keyPath: "id" });
+        }
+      });
     },
   });
 
-  return categoryDB;
+  return initializedDB;
 };
