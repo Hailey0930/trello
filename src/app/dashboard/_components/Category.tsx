@@ -8,6 +8,7 @@ import { Input } from "antd";
 import { ChangeEvent, useRef, useState } from "react";
 import { CategoryProps } from "@/app/_types/Category";
 import { categoryRepository } from "@/app/_data/categoryRepository";
+import mockCardList from "@/app/_data/mock/cardFactory";
 import useClickOutside from "../_hooks/useClickOutside";
 import Card from "./Card";
 
@@ -90,7 +91,9 @@ function Category({ category, dbInstance, fetchCategories }: CategoryProps) {
       </div>
       <div className="py-1.5">
         <div className="flex flex-col gap-3">
-          <Card />
+          {mockCardList.map((card) => (
+            <Card key={card.id} title={card.title} type={card.type} />
+          ))}
         </div>
       </div>
       <footer className="p-2">
