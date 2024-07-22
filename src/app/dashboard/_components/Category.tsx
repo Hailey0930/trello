@@ -9,6 +9,7 @@ import { ChangeEvent, useRef, useState } from "react";
 import { CategoryProps } from "@/app/_types/Category";
 import { categoryRepository } from "@/app/_data/categoryRepository";
 import useClickOutside from "../_hooks/useClickOutside";
+import Card from "./Card";
 
 function Category({ category, dbInstance, fetchCategories }: CategoryProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -85,6 +86,11 @@ function Category({ category, dbInstance, fetchCategories }: CategoryProps) {
           >
             <DeleteOutlined style={{ color: "#5c5b5b" }} />
           </button>
+        </div>
+      </div>
+      <div className="py-1.5">
+        <div className="flex flex-col gap-3">
+          <Card />
         </div>
       </div>
       <footer className="p-2">
