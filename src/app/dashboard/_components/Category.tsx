@@ -38,6 +38,13 @@ function Category({ category, dbInstance, fetchCategories }: CategoryProps) {
     setNewCategoryTitle(e.target.value);
   };
 
+  const handleDelete = async () => {
+    if (!dbInstance) return;
+
+    await categoryRepository.deleteCategory(dbInstance, category.id);
+    fetchCategories();
+  };
+
   return (
     <div className="w-272 h-fit bg-gray-100 rounded-lg p-2">
       <div
@@ -71,7 +78,11 @@ function Category({ category, dbInstance, fetchCategories }: CategoryProps) {
               <EditOutlined style={{ color: "#5c5b5b" }} />
             </button>
           )}
-          <button type="button" className="rounded-full px-1 hover:bg-gray-200">
+          <button
+            type="button"
+            className="rounded-full px-1 hover:bg-gray-200"
+            onClick={handleDelete}
+          >
             <DeleteOutlined style={{ color: "#5c5b5b" }} />
           </button>
         </div>

@@ -44,3 +44,16 @@ export const putCategory = async (
 
   return editedCategory;
 };
+
+export const deleteCategory = async (
+  db: IDBPDatabase<TrelloDBSchema>,
+  id: string,
+) => {
+  const targetCategory = await db.get(CATEGORY_STORE_NAME, id);
+
+  if (!targetCategory) {
+    throw new Error(`Category : ${id} not found`);
+  }
+
+  db.delete(CATEGORY_STORE_NAME, id);
+};
