@@ -66,7 +66,12 @@ function DashboardPage() {
       </header>
       <div className="p-3 flex gap-2 ">
         {categoryList.map((category) => (
-          <Category key={category.id} category={category} />
+          <Category
+            key={category.id}
+            category={category}
+            dbInstance={dbInstance}
+            fetchCategories={fetchCategories}
+          />
         ))}
 
         {isAddingCategory ? (

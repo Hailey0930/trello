@@ -23,3 +23,24 @@ export const createCategory = (
   db.add(CATEGORY_STORE_NAME, newCategory);
   return newCategory;
 };
+
+export const putCategory = async (
+  db: IDBPDatabase<TrelloDBSchema>,
+  id: string,
+  title: string,
+) => {
+  const targetCategory = await db.get(CATEGORY_STORE_NAME, id);
+
+  if (!targetCategory) {
+    throw new Error(`Category : ${id} not found`);
+  }
+
+  const editedCategory = {
+    ...targetCategory,
+    title,
+  };
+
+  db.put(CATEGORY_STORE_NAME, editedCategory);
+
+  return editedCategory;
+};
