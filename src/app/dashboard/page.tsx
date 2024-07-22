@@ -53,12 +53,8 @@ function DashboardPage() {
   const handleSaveCategory = async () => {
     if (newCategoryTitle.trim() === "" || !dbInstance) return;
 
-    const newCategory = await categoryRepository.addCategory(
-      dbInstance,
-      newCategoryTitle,
-    );
-    setCategoryList((prev) => [...prev, newCategory]);
-
+    await categoryRepository.addCategory(dbInstance, newCategoryTitle);
+    fetchCategories();
     setIsAddingCategory(false);
     setNewCategoryTitle("");
   };
