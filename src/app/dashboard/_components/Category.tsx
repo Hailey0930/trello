@@ -8,8 +8,8 @@ interface Props {
 
 function Category({ category }: Props) {
   return (
-    <div className="w-272 bg-gray-100 rounded-lg p-2">
-      <h1 className="font-medium">{category.title}</h1>
+    <div className="w-272 h-fit bg-gray-100 rounded-lg p-2">
+      <h1 className="font-medium px-2">{category.title}</h1>
       <footer className="p-2">
         <button
           type="button"

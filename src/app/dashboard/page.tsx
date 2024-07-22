@@ -2,13 +2,18 @@
 
 import { Input } from "antd";
 import { useEffect, useRef, useState } from "react";
-
+import { PlusOutlined } from "@ant-design/icons";
+import { IDBPDatabase } from "idb";
 import { categoryRepository } from "../_data/categoryRepository";
 import Category from "./_components/Category";
 import { Category as ICategory } from "../_types/Category";
 import useClickOutside from "./_hooks/useClickOutside";
+import { initializeDB, TrelloDBSchema } from "../_data/middleware/db";
+import { CATEGORY_STORE_NAME } from "../_constant/constants";
 
 function DashboardPage() {
+  const [dbInstance, setDbInstance] =
+    useState<IDBPDatabase<TrelloDBSchema> | null>(null);
   const [categoryList, setCategoryList] = useState<ICategory[]>([]);
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [newCategory, setNewCategory] = useState("");
@@ -16,8 +21,28 @@ function DashboardPage() {
   const addCategoryBoxRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setCategoryList(categoryRepository.getAll());
-  }, []);
+    const initDB = async () => {
+      if (!dbInstance) {
+        setDbInstance(
+          await initializeDB([CATEGORY_STORE_NAME, CATEGORY_STORE_NAME]),
+        );
+      }
+      return dbInstance;
+    };
+
+    if (!dbInstance) initDB();
+  }, [dbInstance]);
+
+  useEffect(() => {
+    if (dbInstance) {
+      const fetchCategories = async () => {
+        const categories = await categoryRepository.getAll(dbInstance);
+        setCategoryList(categories);
+      };
+
+      fetchCategories();
+    }
+  }, [dbInstance]);
 
   useClickOutside(setIsAddingCategory, addCategoryBoxRef);
 
@@ -49,48 +74,52 @@ function DashboardPage() {
       <header className="h-14 bg-sky-400 flex items-center pl-5 text-white">
         <div>Dashboard</div>
       </header>
-      <div className="p-3 flex gap-2">
+      <div className="p-3 flex gap-2 ">
         {categoryList.map((category) => (
           <Category key={category.id} category={category} />
         ))}
 
-        <div className="w-272 bg-gray-100 rounded-lg ">
-          {isAddingCategory ? (
-            <div ref={addCategoryBoxRef}>
-              <h1>Add category</h1>
-              <Input
-                placeholder="Category name"
-                autoFocus
-                onChange={handleInputChange}
-                value={newCategory}
-              />
-              <div>
-                <button
-                  type="button"
-                  className="bg-green-500 text-white rounded-lg p-2"
-                  onClick={handleSaveCategory}
-                >
-                  Save
-                </button>
-                <button
-                  type="button"
-                  className="bg-red-500 text-white rounded-lg p-2"
-                  onClick={() => setIsAddingCategory(false)}
-                >
-                  Cancel
-                </button>
-              </div>
+        {isAddingCategory ? (
+          <div
+            ref={addCategoryBoxRef}
+            className="w-272 bg-gray-100 rounded-lg flex flex-col justify-center items-center gap-1"
+          >
+            <h1 className="font-semibold">Add category</h1>
+            <Input
+              placeholder="Category name"
+              autoFocus
+              onChange={handleInputChange}
+              value={newCategory}
+            />
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                className="bg-emerald-400 text-white rounded-lg px-2 py-1 font-semibold"
+                onClick={handleSaveCategory}
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                className="bg-rose-600 text-white rounded-lg px-2 py-1 font-semibold"
+                onClick={() => setIsAddingCategory(false)}
+              >
+                Cancel
+              </button>
             </div>
-          ) : (
+          </div>
+        ) : (
+          <div className="w-272 h-10 bg-gray-100 rounded-lg">
             <button
-              className="w-full h-full bg-gray-100 rounded-lg p-2"
+              className="w-full h-full bg-gray-100 rounded-lg p-2 flex justify-center items-center hover:bg-gray-200 font-semibold gap-2"
               type="button"
               onClick={() => setIsAddingCategory(true)}
             >
+              <PlusOutlined />
               Add category
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

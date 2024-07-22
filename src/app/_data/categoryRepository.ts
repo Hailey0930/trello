@@ -1,12 +1,16 @@
+import { IDBPDatabase } from "idb";
 import { Category } from "../_types/Category";
-import mockCategoryList from "./mock/categoryFactory";
+import getAllCategories from "./middleware/category.middleware";
+import { TrelloDBSchema } from "./middleware/db";
 
 export interface CategoryRepository {
-  getAll: () => Category[];
+  getAll: (db: IDBPDatabase<TrelloDBSchema>) => Promise<Category[]>;
 }
 
-const getAll = () => {
-  return mockCategoryList;
+const getAll = async (
+  db: IDBPDatabase<TrelloDBSchema>,
+): Promise<Category[]> => {
+  return getAllCategories(db);
 };
 
 export const categoryRepository: CategoryRepository = {
