@@ -1,7 +1,7 @@
 "use client";
 
 import { Input } from "antd";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { IDBPDatabase } from "idb";
 import { categoryRepository } from "../_data/categoryRepository";
@@ -33,16 +33,16 @@ function DashboardPage() {
     if (!dbInstance) initDB();
   }, [dbInstance]);
 
-  useEffect(() => {
+  const fetchCategories = useCallback(async () => {
     if (dbInstance) {
-      const fetchCategories = async () => {
-        const categories = await categoryRepository.getAll(dbInstance);
-        setCategoryList(categories);
-      };
-
-      fetchCategories();
+      const categories = await categoryRepository.getAll(dbInstance);
+      setCategoryList(categories);
     }
   }, [dbInstance]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [dbInstance, fetchCategories]);
 
   useClickOutside(setIsAddingCategory, addCategoryBoxRef);
 
