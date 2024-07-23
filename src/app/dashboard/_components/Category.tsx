@@ -7,9 +7,12 @@ import {
 import { Input } from "antd";
 import { ChangeEvent, useRef, useState } from "react";
 import { CategoryProps } from "@/app/_types/Category";
+import { categoryRepository } from "@/app/_data/categoryRepository";
+import mockCardList from "@/app/_data/mock/cardFactory";
 import useClickOutside from "../_hooks/useClickOutside";
+import Card from "./Card";
 
-function Category({ category }: CategoryProps) {
+function Category({ category, dbInstance, fetchCategories }: CategoryProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [newCategoryTitle, setNewCategoryTitle] = useState(category.title);
 
@@ -21,12 +24,27 @@ function Category({ category }: CategoryProps) {
     setIsEditingTitle(true);
   };
 
-  const handleEditFinish = () => {
+  const handleEditFinish = async () => {
+    if (!dbInstance) return;
+
+    await categoryRepository.editCategory(
+      dbInstance,
+      category.id,
+      newCategoryTitle,
+    );
+    fetchCategories();
     setIsEditingTitle(false);
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNewCategoryTitle(e.target.value);
+  };
+
+  const handleDelete = async () => {
+    if (!dbInstance) return;
+
+    await categoryRepository.deleteCategory(dbInstance, category.id);
+    fetchCategories();
   };
 
   return (
@@ -62,9 +80,20 @@ function Category({ category }: CategoryProps) {
               <EditOutlined style={{ color: "#5c5b5b" }} />
             </button>
           )}
-          <button type="button" className="rounded-full px-1 hover:bg-gray-200">
+          <button
+            type="button"
+            className="rounded-full px-1 hover:bg-gray-200"
+            onClick={handleDelete}
+          >
             <DeleteOutlined style={{ color: "#5c5b5b" }} />
           </button>
+        </div>
+      </div>
+      <div className="py-1.5">
+        <div className="flex flex-col gap-3">
+          {mockCardList.map((card) => (
+            <Card key={card.id} title={card.title} type={card.type} />
+          ))}
         </div>
       </div>
       <footer className="p-2">
