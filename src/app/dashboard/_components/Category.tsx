@@ -7,10 +7,9 @@ import {
 import { Input } from "antd";
 import { ChangeEvent, useRef, useState } from "react";
 import { CategoryProps } from "@/app/_types/Category";
-import { categoryRepository } from "@/app/_data/categoryRepository";
 import useClickOutside from "../_hooks/useClickOutside";
 
-function Category({ category, dbInstance, fetchCategories }: CategoryProps) {
+function Category({ category, onEditFinish }: CategoryProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [newCategoryTitle, setNewCategoryTitle] = useState(category.title);
 
@@ -23,11 +22,7 @@ function Category({ category, dbInstance, fetchCategories }: CategoryProps) {
   };
 
   const handleEditFinish = async () => {
-    if (!dbInstance) return;
-
-    await categoryRepository.edit(dbInstance, category.id, newCategoryTitle);
-    fetchCategories();
-    setIsEditingTitle(false);
+    await onEditFinish(category.id, newCategoryTitle);
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {

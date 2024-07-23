@@ -59,6 +59,13 @@ function DashboardPage() {
     setNewCategoryTitle("");
   };
 
+  const onEditFinish = async (id: string, title: string) => {
+    if (!dbInstance) return;
+
+    await categoryRepository.edit(dbInstance, id, title);
+    fetchCategories();
+  };
+
   return (
     <div>
       <header className="h-14 bg-sky-400 flex items-center pl-5 text-white">
@@ -69,8 +76,7 @@ function DashboardPage() {
           <Category
             key={category.id}
             category={category}
-            dbInstance={dbInstance}
-            fetchCategories={fetchCategories}
+            onEditFinish={onEditFinish}
           />
         ))}
 
