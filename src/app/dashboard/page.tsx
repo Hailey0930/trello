@@ -66,6 +66,13 @@ function DashboardPage() {
     fetchCategories();
   };
 
+  const onDeleteCategory = async (id: string) => {
+    if (!dbInstance) return;
+
+    await categoryRepository.remove(dbInstance, id);
+    fetchCategories();
+  };
+
   return (
     <div>
       <header className="h-14 bg-sky-400 flex items-center pl-5 text-white">
@@ -77,6 +84,7 @@ function DashboardPage() {
             key={category.id}
             category={category}
             onEditFinish={onEditFinish}
+            onDeleteCategory={onDeleteCategory}
           />
         ))}
 

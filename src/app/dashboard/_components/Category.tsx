@@ -9,7 +9,7 @@ import { ChangeEvent, useRef, useState } from "react";
 import { CategoryProps } from "@/app/_types/Category";
 import useClickOutside from "../_hooks/useClickOutside";
 
-function Category({ category, onEditFinish }: CategoryProps) {
+function Category({ category, onEditFinish, onDeleteCategory }: CategoryProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [newCategoryTitle, setNewCategoryTitle] = useState(category.title);
 
@@ -30,10 +30,7 @@ function Category({ category, onEditFinish }: CategoryProps) {
   };
 
   const handleDelete = async () => {
-    if (!dbInstance) return;
-
-    await categoryRepository.remove(dbInstance, category.id);
-    fetchCategories();
+    await onDeleteCategory(category.id);
   };
 
   return (
