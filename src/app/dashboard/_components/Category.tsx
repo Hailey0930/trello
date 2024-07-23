@@ -25,11 +25,7 @@ function Category({ category, dbInstance, fetchCategories }: CategoryProps) {
   const handleEditFinish = async () => {
     if (!dbInstance) return;
 
-    await categoryRepository.editCategory(
-      dbInstance,
-      category.id,
-      newCategoryTitle,
-    );
+    await categoryRepository.edit(dbInstance, category.id, newCategoryTitle);
     fetchCategories();
     setIsEditingTitle(false);
   };

@@ -9,11 +9,8 @@ import {
 
 export interface CategoryRepository {
   getAll: (db: IDBPDatabase<TrelloDBSchema>) => Promise<Category[]>;
-  addCategory: (
-    db: IDBPDatabase<TrelloDBSchema>,
-    title: string,
-  ) => Promise<Category>;
-  editCategory: (
+  add: (db: IDBPDatabase<TrelloDBSchema>, title: string) => Promise<Category>;
+  edit: (
     db: IDBPDatabase<TrelloDBSchema>,
     id: string,
     title: string,
@@ -26,14 +23,14 @@ const getAll = async (
   return getAllCategories(db);
 };
 
-const addCategory = async (
+const add = async (
   db: IDBPDatabase<TrelloDBSchema>,
   title: string,
 ): Promise<Category> => {
   return createCategory(db, title);
 };
 
-const editCategory = async (
+const edit = async (
   db: IDBPDatabase<TrelloDBSchema>,
   id: string,
   title: string,
@@ -43,6 +40,6 @@ const editCategory = async (
 
 export const categoryRepository: CategoryRepository = {
   getAll,
-  addCategory,
-  editCategory,
+  add,
+  edit,
 };
