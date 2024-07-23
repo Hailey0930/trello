@@ -9,7 +9,7 @@ import { ChangeEvent, useRef, useState } from "react";
 import { CategoryProps } from "@/app/_types/Category";
 import useClickOutside from "../_hooks/useClickOutside";
 
-function Category({ category, onEditFinish }: CategoryProps) {
+function Category({ category, onEditCategory }: CategoryProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [newCategoryTitle, setNewCategoryTitle] = useState(category.title);
 
@@ -22,7 +22,7 @@ function Category({ category, onEditFinish }: CategoryProps) {
   };
 
   const handleEditFinish = async () => {
-    await onEditFinish(category.id, newCategoryTitle);
+    await onEditCategory(category.id, newCategoryTitle);
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {

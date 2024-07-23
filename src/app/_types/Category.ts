@@ -8,5 +8,5 @@ export interface Category {
 
 export interface CategoryProps {
   category: Category;
-  onEditFinish: (id: string, title: string) => Promise<void>;
+  onEditCategory: (id: string, title: string) => Promise<void>;
 }

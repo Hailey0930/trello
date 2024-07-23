@@ -59,7 +59,7 @@ function DashboardPage() {
     setNewCategoryTitle("");
   };
 
-  const onEditFinish = async (id: string, title: string) => {
+  const onEditCategory = async (id: string, title: string) => {
     if (!dbInstance) return;
 
     await categoryRepository.edit(dbInstance, id, title);
@@ -76,7 +76,7 @@ function DashboardPage() {
           <Category
             key={category.id}
             category={category}
-            onEditFinish={onEditFinish}
+            onEditCategory={onEditCategory}
           />
         ))}
 
