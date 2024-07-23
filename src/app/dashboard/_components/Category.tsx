@@ -32,7 +32,7 @@ function Category({ category, onEditFinish }: CategoryProps) {
   const handleDelete = async () => {
     if (!dbInstance) return;
 
-    await categoryRepository.deleteCategory(dbInstance, category.id);
+    await categoryRepository.remove(dbInstance, category.id);
     fetchCategories();
   };
 
