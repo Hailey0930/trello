@@ -5,3 +5,7 @@ export interface Category {
   title: string;
   cards: Card[];
 }
+
+export interface CategoryProps {
+  category: Category;
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import { Input } from "antd";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { IDBPDatabase } from "idb";
 import { categoryRepository } from "../_data/categoryRepository";
@@ -16,7 +16,7 @@ function DashboardPage() {
     useState<IDBPDatabase<TrelloDBSchema> | null>(null);
   const [categoryList, setCategoryList] = useState<ICategory[]>([]);
   const [isAddingCategory, setIsAddingCategory] = useState(false);
-  const [newCategory, setNewCategory] = useState("");
+  const [newCategoryTitle, setNewCategoryTitle] = useState("");
 
   const addCategoryBoxRef = useRef<HTMLDivElement>(null);
 
@@ -33,40 +33,30 @@ function DashboardPage() {
     if (!dbInstance) initDB();
   }, [dbInstance]);
 
-  useEffect(() => {
+  const fetchCategories = useCallback(async () => {
     if (dbInstance) {
-      const fetchCategories = async () => {
-        const categories = await categoryRepository.getAll(dbInstance);
-        setCategoryList(categories);
-      };
-
-      fetchCategories();
+      const categories = await categoryRepository.getAll(dbInstance);
+      setCategoryList(categories);
     }
   }, [dbInstance]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [dbInstance, fetchCategories]);
 
   useClickOutside(setIsAddingCategory, addCategoryBoxRef);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewCategory(e.target.value);
+    setNewCategoryTitle(e.target.value);
   };
 
-  const handleSaveCategory = () => {
-    setCategoryList((prev) => {
-      const newCategoryList = [...prev];
+  const handleSaveCategory = async () => {
+    if (newCategoryTitle.trim() === "" || !dbInstance) return;
 
-      const tempCategory: ICategory = {
-        id: (newCategoryList.length + 1).toString(),
-        title: newCategory,
-        cards: [],
-      };
-
-      newCategoryList.push(tempCategory);
-
-      return newCategoryList;
-    });
-
+    await categoryRepository.addCategory(dbInstance, newCategoryTitle);
+    fetchCategories();
     setIsAddingCategory(false);
-    setNewCategory("");
+    setNewCategoryTitle("");
   };
 
   return (
@@ -89,7 +79,7 @@ function DashboardPage() {
               placeholder="Category name"
               autoFocus
               onChange={handleInputChange}
-              value={newCategory}
+              value={newCategoryTitle}
             />
             <div className="flex items-center gap-2">
               <button
