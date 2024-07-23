@@ -5,3 +5,9 @@ export interface Category {
   title: string;
   cards: Card[];
 }
+
+export interface CategoryProps {
+  category: Category;
+  onEditCategory: (id: string, title: string) => Promise<void>;
+  onDeleteCategory: (id: string) => Promise<void>;
+}

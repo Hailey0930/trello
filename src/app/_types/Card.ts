@@ -5,3 +5,8 @@ export interface Card {
   title: string;
   type: CardType;
 }
+
+export interface CardProps {
+  title: string;
+  type: CardType;
+}
