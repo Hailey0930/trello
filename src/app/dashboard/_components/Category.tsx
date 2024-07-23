@@ -7,7 +7,9 @@ import {
 import { Input } from "antd";
 import { ChangeEvent, useRef, useState } from "react";
 import { CategoryProps } from "@/app/_types/Category";
+import mockCardList from "@/app/_data/mock/cardFactory";
 import useClickOutside from "../_hooks/useClickOutside";
+import Card from "./Card";
 
 function Category({
   category,
@@ -77,6 +79,13 @@ function Category({
           >
             <DeleteOutlined style={{ color: "#5c5b5b" }} />
           </button>
+        </div>
+      </div>
+      <div className="py-1.5">
+        <div className="flex flex-col gap-3">
+          {mockCardList.map((card) => (
+            <Card key={card.id} title={card.title} type={card.type} />
+          ))}
         </div>
       </div>
       <footer className="p-2">
