@@ -25,10 +25,7 @@ const getAll = async (
   return getAllCategories(db);
 };
 
-const add = async (
-  db: IDBPDatabase<TrelloDBSchema>,
-  title: string,
-): Promise<Category> => {
+const add = async (db: IDBPDatabase<TrelloDBSchema>, title: string) => {
   return createCategory(db, title);
 };
 
@@ -36,7 +33,7 @@ const edit = async (
   db: IDBPDatabase<TrelloDBSchema>,
   id: string,
   title: string,
-): Promise<Category> => {
+) => {
   return putCategory(db, id, title);
 };
 
