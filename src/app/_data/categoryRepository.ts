@@ -3,26 +3,20 @@ import { Category } from "../_types/Category";
 import { TrelloDBSchema } from "./middleware/db";
 import {
   createCategory,
-  deleteCategory as deleteCategoryFromDB,
+  deleteCategory,
   getAllCategories,
   putCategory,
 } from "./middleware/category.middleware";
 
 export interface CategoryRepository {
   getAll: (db: IDBPDatabase<TrelloDBSchema>) => Promise<Category[]>;
-  addCategory: (
-    db: IDBPDatabase<TrelloDBSchema>,
-    title: string,
-  ) => Promise<Category>;
-  editCategory: (
+  add: (db: IDBPDatabase<TrelloDBSchema>, title: string) => Promise<Category>;
+  edit: (
     db: IDBPDatabase<TrelloDBSchema>,
     id: string,
     title: string,
   ) => Promise<Category>;
-  deleteCategory: (
-    db: IDBPDatabase<TrelloDBSchema>,
-    id: string,
-  ) => Promise<void>;
+  remove: (db: IDBPDatabase<TrelloDBSchema>, id: string) => Promise<void>;
 }
 
 const getAll = async (
@@ -31,28 +25,25 @@ const getAll = async (
   return getAllCategories(db);
 };
 
-const addCategory = async (
-  db: IDBPDatabase<TrelloDBSchema>,
-  title: string,
-): Promise<Category> => {
+const add = async (db: IDBPDatabase<TrelloDBSchema>, title: string) => {
   return createCategory(db, title);
 };
 
-const editCategory = async (
+const edit = async (
   db: IDBPDatabase<TrelloDBSchema>,
   id: string,
   title: string,
-): Promise<Category> => {
+) => {
   return putCategory(db, id, title);
 };
 
-const deleteCategory = async (db: IDBPDatabase<TrelloDBSchema>, id: string) => {
-  return deleteCategoryFromDB(db, id);
+const remove = async (db: IDBPDatabase<TrelloDBSchema>, id: string) => {
+  return deleteCategory(db, id);
 };
 
 export const categoryRepository: CategoryRepository = {
   getAll,
-  addCategory,
-  editCategory,
-  deleteCategory,
+  add,
+  edit,
+  remove,
 };

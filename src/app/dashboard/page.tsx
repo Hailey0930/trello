@@ -53,10 +53,24 @@ function DashboardPage() {
   const handleSaveCategory = async () => {
     if (newCategoryTitle.trim() === "" || !dbInstance) return;
 
-    await categoryRepository.addCategory(dbInstance, newCategoryTitle);
+    await categoryRepository.add(dbInstance, newCategoryTitle);
     fetchCategories();
     setIsAddingCategory(false);
     setNewCategoryTitle("");
+  };
+
+  const onEditCategory = async (id: string, title: string) => {
+    if (!dbInstance) return;
+
+    await categoryRepository.edit(dbInstance, id, title);
+    fetchCategories();
+  };
+
+  const onDeleteCategory = async (id: string) => {
+    if (!dbInstance) return;
+
+    await categoryRepository.remove(dbInstance, id);
+    fetchCategories();
   };
 
   return (
@@ -69,8 +83,8 @@ function DashboardPage() {
           <Category
             key={category.id}
             category={category}
-            dbInstance={dbInstance}
-            fetchCategories={fetchCategories}
+            onEditCategory={onEditCategory}
+            onDeleteCategory={onDeleteCategory}
           />
         ))}
 
