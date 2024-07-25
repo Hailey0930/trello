@@ -1,37 +1,22 @@
 "use client";
 
 import { Input } from "antd";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
-import { IDBPDatabase } from "idb";
 import { categoryRepository } from "../_data/categoryRepository";
 import Category from "./_components/Category";
 import { Category as ICategory } from "../_types/Category";
 import useClickOutside from "./_hooks/useClickOutside";
-import { initializeDB, TrelloDBSchema } from "../_data/middleware/db";
-import { CATEGORY_STORE_NAME } from "../_constant/constants";
+import { DBContext } from "../Provider";
 
 function DashboardPage() {
-  const [dbInstance, setDbInstance] =
-    useState<IDBPDatabase<TrelloDBSchema> | null>(null);
   const [categoryList, setCategoryList] = useState<ICategory[]>([]);
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [newCategoryTitle, setNewCategoryTitle] = useState("");
 
+  const dbInstance = useContext(DBContext);
+
   const addCategoryBoxRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const initDB = async () => {
-      if (!dbInstance) {
-        setDbInstance(
-          await initializeDB([CATEGORY_STORE_NAME, CATEGORY_STORE_NAME]),
-        );
-      }
-      return dbInstance;
-    };
-
-    if (!dbInstance) initDB();
-  }, [dbInstance]);
 
   const fetchCategories = useCallback(async () => {
     if (dbInstance) {
