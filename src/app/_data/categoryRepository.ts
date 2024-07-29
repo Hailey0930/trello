@@ -1,12 +1,8 @@
 import { IDBPDatabase } from "idb";
+import { v4 as uuidv4 } from "uuid";
 import { Category } from "../_types/Category";
-import { TrelloDBSchema } from "./middleware/db";
-import {
-  createCategory,
-  deleteCategory,
-  getAllCategories,
-  putCategory,
-} from "./middleware/category.middleware";
+import { TrelloDBSchema } from "./db";
+import { CATEGORY_STORE_NAME } from "../_constant/constants";
 
 export interface CategoryRepository {
   getAll: () => Promise<Category[]>;
@@ -21,18 +17,48 @@ export class CategoryRepositoryFactory implements CategoryRepository {
   }
 
   getAll = async (): Promise<Category[]> => {
-    return getAllCategories(this.db);
+    const categories = await this.db.getAll(CATEGORY_STORE_NAME);
+    return categories.sort((a, b) => a.order - b.order);
   };
 
   add = async (title: string) => {
-    return createCategory(this.db, title);
+    const categories = await this.getAll();
+    const newOrder = categories.length;
+    const newCategory = {
+      id: uuidv4(),
+      title,
+      order: newOrder,
+      cards: [],
+    };
+
+    await this.db.add(CATEGORY_STORE_NAME, newCategory);
+    return newCategory;
   };
 
   edit = async (id: string, title: string) => {
-    return putCategory(this.db, id, title);
+    const targetCategory = await this.db.get(CATEGORY_STORE_NAME, id);
+
+    if (!targetCategory) {
+      throw new Error(`Category : ${id} not found`);
+    }
+
+    const editedCategory = {
+      ...targetCategory,
+      title,
+    };
+
+    await this.db.put(CATEGORY_STORE_NAME, editedCategory);
+
+    return editedCategory;
   };
 
   remove = async (id: string) => {
-    return deleteCategory(this.db, id);
+    const targetCategory = await this.db.get(CATEGORY_STORE_NAME, id);
+
+    if (!targetCategory) {
+      throw new Error(`Category : ${id} not found`);
+    }
+
+    await this.db.delete(CATEGORY_STORE_NAME, id);
   };
 }
