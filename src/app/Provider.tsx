@@ -2,7 +2,7 @@
 
 import { IDBPDatabase } from "idb";
 import { createContext, ReactNode, useEffect, useState } from "react";
-import { initializeDB, TrelloDBSchema } from "./_data/middleware/db";
+import { initializeDB, TrelloDBSchema } from "./_data/db";
 import { CARD_STORE_NAME, CATEGORY_STORE_NAME } from "./_constant/constants";
 
 export const DBContext = createContext<IDBPDatabase<TrelloDBSchema> | null>(
