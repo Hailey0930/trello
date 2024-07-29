@@ -10,18 +10,29 @@ import { CategoryProps } from "@/app/_types/Category";
 import mockCardList from "@/app/_data/mock/cardFactory";
 import useClickOutside from "../_hooks/useClickOutside";
 import Card from "./Card";
+import useDragItem from "../_hooks/dnd/useDragItem";
+import useDropItem from "../_hooks/dnd/useDropItem";
 
 function Category({
+  index,
   category,
   onEditCategory,
   onDeleteCategory,
+  onDragCategory,
 }: CategoryProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [newCategoryTitle, setNewCategoryTitle] = useState(category.title);
 
+  const dragRef = useRef<HTMLDivElement>(null);
   const editTitleInputRef = useRef<HTMLDivElement>(null);
 
   useClickOutside(setIsEditingTitle, editTitleInputRef);
+
+  const { isDragging, drag } = useDragItem("category", category.id, index);
+  const { handlerId, drop } = useDropItem(dragRef, index, onDragCategory);
+  drag(drop(dragRef));
+
+  const opacity = isDragging ? 0 : 1;
 
   const handleEdit = () => {
     setIsEditingTitle(true);
@@ -41,7 +52,12 @@ function Category({
   };
 
   return (
-    <div className="w-272 h-fit bg-gray-100 rounded-lg p-2">
+    <div
+      ref={dragRef}
+      style={{ opacity }}
+      data-handler-id={handlerId}
+      className="w-272 h-fit bg-gray-100 rounded-lg p-2 cursor-pointer"
+    >
       <div
         className="flex items-center justify-between"
         ref={editTitleInputRef}
