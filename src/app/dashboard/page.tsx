@@ -1,9 +1,16 @@
 "use client";
 
 import { Input } from "antd";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { PlusOutlined } from "@ant-design/icons";
-import { categoryRepository } from "../_data/categoryRepository";
+import { CategoryRepositoryFactory } from "../_data/categoryRepository";
 import Category from "./_components/Category";
 import { Category as ICategory } from "../_types/Category";
 import useClickOutside from "./_hooks/useClickOutside";
@@ -18,12 +25,16 @@ function DashboardPage() {
 
   const addCategoryBoxRef = useRef<HTMLDivElement>(null);
 
-  const fetchCategories = useCallback(async () => {
-    if (dbInstance) {
-      const categories = await categoryRepository.getAll(dbInstance);
-      setCategoryList(categories);
-    }
+  const categoryRepository = useMemo(() => {
+    return dbInstance ? new CategoryRepositoryFactory(dbInstance) : null;
   }, [dbInstance]);
+
+  const fetchCategories = useCallback(async () => {
+    if (!categoryRepository) return;
+
+    const categories = await categoryRepository.getAll();
+    setCategoryList(categories);
+  }, [categoryRepository]);
 
   useEffect(() => {
     fetchCategories();
@@ -36,25 +47,25 @@ function DashboardPage() {
   };
 
   const handleSaveCategory = async () => {
-    if (newCategoryTitle.trim() === "" || !dbInstance) return;
+    if (newCategoryTitle.trim() === "" || !categoryRepository) return;
 
-    await categoryRepository.add(dbInstance, newCategoryTitle);
+    await categoryRepository.add(newCategoryTitle);
     fetchCategories();
     setIsAddingCategory(false);
     setNewCategoryTitle("");
   };
 
   const onEditCategory = async (id: string, title: string) => {
-    if (!dbInstance) return;
+    if (!categoryRepository) return;
 
-    await categoryRepository.edit(dbInstance, id, title);
+    await categoryRepository.edit(id, title);
     fetchCategories();
   };
 
   const onDeleteCategory = async (id: string) => {
-    if (!dbInstance) return;
+    if (!categoryRepository) return;
 
-    await categoryRepository.remove(dbInstance, id);
+    await categoryRepository.remove(id);
     fetchCategories();
   };
 

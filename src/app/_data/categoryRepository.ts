@@ -9,41 +9,30 @@ import {
 } from "./middleware/category.middleware";
 
 export interface CategoryRepository {
-  getAll: (db: IDBPDatabase<TrelloDBSchema>) => Promise<Category[]>;
-  add: (db: IDBPDatabase<TrelloDBSchema>, title: string) => Promise<Category>;
-  edit: (
-    db: IDBPDatabase<TrelloDBSchema>,
-    id: string,
-    title: string,
-  ) => Promise<Category>;
-  remove: (db: IDBPDatabase<TrelloDBSchema>, id: string) => Promise<void>;
+  getAll: () => Promise<Category[]>;
+  add: (title: string) => Promise<Category>;
+  edit: (id: string, title: string) => Promise<Category>;
+  remove: (id: string) => Promise<void>;
 }
 
-const getAll = async (
-  db: IDBPDatabase<TrelloDBSchema>,
-): Promise<Category[]> => {
-  return getAllCategories(db);
-};
+export class CategoryRepositoryFactory implements CategoryRepository {
+  constructor(private db: IDBPDatabase<TrelloDBSchema>) {
+    this.db = db;
+  }
 
-const add = async (db: IDBPDatabase<TrelloDBSchema>, title: string) => {
-  return createCategory(db, title);
-};
+  getAll = async (): Promise<Category[]> => {
+    return getAllCategories(this.db);
+  };
 
-const edit = async (
-  db: IDBPDatabase<TrelloDBSchema>,
-  id: string,
-  title: string,
-) => {
-  return putCategory(db, id, title);
-};
+  add = async (title: string) => {
+    return createCategory(this.db, title);
+  };
 
-const remove = async (db: IDBPDatabase<TrelloDBSchema>, id: string) => {
-  return deleteCategory(db, id);
-};
+  edit = async (id: string, title: string) => {
+    return putCategory(this.db, id, title);
+  };
 
-export const categoryRepository: CategoryRepository = {
-  getAll,
-  add,
-  edit,
-  remove,
-};
+  remove = async (id: string) => {
+    return deleteCategory(this.db, id);
+  };
+}
