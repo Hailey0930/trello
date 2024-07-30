@@ -17,8 +17,7 @@ export class CategoryRepositoryFactory implements CategoryRepository {
   }
 
   getAll = async (): Promise<Category[]> => {
-    const categories = await this.db.getAll(CATEGORY_STORE_NAME);
-    return categories.sort((a, b) => a.order - b.order);
+    return this.db.getAll(CATEGORY_STORE_NAME);
   };
 
   add = async (title: string) => {
