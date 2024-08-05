@@ -29,6 +29,7 @@ function Category({
 
   const handleEditFinish = async () => {
     await onEditCategory(category.id, newCategoryTitle);
+    setIsEditingTitle(false);
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {

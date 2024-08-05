@@ -1,44 +1,40 @@
 "use client";
 
 import { Input } from "antd";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { PlusOutlined } from "@ant-design/icons";
-import { IDBPDatabase } from "idb";
-import { categoryRepository } from "../_data/categoryRepository";
+import { CategoryRepositoryImpl } from "../_data/categoryRepository";
 import Category from "./_components/Category";
 import { Category as ICategory } from "../_types/Category";
 import useClickOutside from "./_hooks/useClickOutside";
-import { initializeDB, TrelloDBSchema } from "../_data/middleware/db";
-import { CATEGORY_STORE_NAME } from "../_constant/constants";
+import { DBContext } from "../DBProvider";
 
 function DashboardPage() {
-  const [dbInstance, setDbInstance] =
-    useState<IDBPDatabase<TrelloDBSchema> | null>(null);
   const [categoryList, setCategoryList] = useState<ICategory[]>([]);
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [newCategoryTitle, setNewCategoryTitle] = useState("");
 
+  const dbInstance = useContext(DBContext);
+
   const addCategoryBoxRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const initDB = async () => {
-      if (!dbInstance) {
-        setDbInstance(
-          await initializeDB([CATEGORY_STORE_NAME, CATEGORY_STORE_NAME]),
-        );
-      }
-      return dbInstance;
-    };
-
-    if (!dbInstance) initDB();
+  const categoryRepository = useMemo(() => {
+    return dbInstance ? new CategoryRepositoryImpl(dbInstance) : null;
   }, [dbInstance]);
 
   const fetchCategories = useCallback(async () => {
-    if (dbInstance) {
-      const categories = await categoryRepository.getAll(dbInstance);
-      setCategoryList(categories);
-    }
-  }, [dbInstance]);
+    if (!categoryRepository) return;
+
+    const categories = await categoryRepository.getAll();
+    setCategoryList(categories);
+  }, [categoryRepository]);
 
   useEffect(() => {
     fetchCategories();
@@ -51,25 +47,25 @@ function DashboardPage() {
   };
 
   const handleSaveCategory = async () => {
-    if (newCategoryTitle.trim() === "" || !dbInstance) return;
+    if (newCategoryTitle.trim() === "" || !categoryRepository) return;
 
-    await categoryRepository.add(dbInstance, newCategoryTitle);
+    await categoryRepository.add(newCategoryTitle);
     fetchCategories();
     setIsAddingCategory(false);
     setNewCategoryTitle("");
   };
 
   const onEditCategory = async (id: string, title: string) => {
-    if (!dbInstance) return;
+    if (!categoryRepository) return;
 
-    await categoryRepository.edit(dbInstance, id, title);
+    await categoryRepository.edit(id, title);
     fetchCategories();
   };
 
   const onDeleteCategory = async (id: string) => {
-    if (!dbInstance) return;
+    if (!categoryRepository) return;
 
-    await categoryRepository.remove(dbInstance, id);
+    await categoryRepository.remove(id);
     fetchCategories();
   };
 
