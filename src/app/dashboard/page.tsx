@@ -14,7 +14,7 @@ import { CategoryRepositoryFactory } from "../_data/categoryRepository";
 import Category from "./_components/Category";
 import { Category as ICategory } from "../_types/Category";
 import useClickOutside from "./_hooks/useClickOutside";
-import { DBContext } from "../Provider";
+import { DBContext } from "../DBProvider";
 
 function DashboardPage() {
   const [categoryList, setCategoryList] = useState<ICategory[]>([]);

@@ -9,7 +9,7 @@ export const DBContext = createContext<IDBPDatabase<TrelloDBSchema> | null>(
   null,
 );
 
-export function Provider({ children }: { children: ReactNode }) {
+export function DBProvider({ children }: { children: ReactNode }) {
   const [dbInstance, setDbInstance] =
     useState<IDBPDatabase<TrelloDBSchema> | null>(null);
 
