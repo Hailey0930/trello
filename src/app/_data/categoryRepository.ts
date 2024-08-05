@@ -9,6 +9,7 @@ export interface CategoryRepository {
   add: (title: string) => Promise<Category>;
   edit: (id: string, title: string) => Promise<Category>;
   remove: (id: string) => Promise<void>;
+  updateAll: (categories: Category[]) => Promise<void>;
 }
 
 export class CategoryRepositoryImpl implements CategoryRepository {
@@ -59,5 +60,11 @@ export class CategoryRepositoryImpl implements CategoryRepository {
     }
 
     await this.db.delete(CATEGORY_STORE_NAME, id);
+  };
+
+  updateAll = async (categories: Category[]) => {
+    await Promise.all(
+      categories.map((category) => this.db.put(CATEGORY_STORE_NAME, category)),
+    );
   };
 }
