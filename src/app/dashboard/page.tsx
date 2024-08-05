@@ -86,7 +86,7 @@ function DashboardPage() {
     );
 
     setCategoryList(reorderedCategoryList);
-    await categoryRepository.saveOrder(reorderedCategoryList);
+    await categoryRepository.updateAll(reorderedCategoryList);
   };
 
   return (
