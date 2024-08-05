@@ -12,11 +12,11 @@ import {
 import { PlusOutlined } from "@ant-design/icons";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { CategoryRepositoryFactory } from "../_data/categoryRepository";
+import { CategoryRepositoryImpl } from "../_data/categoryRepository";
 import Category from "./_components/Category";
 import { Category as ICategory } from "../_types/Category";
 import useClickOutside from "./_hooks/useClickOutside";
-import { DBContext } from "../Provider";
+import { DBContext } from "../DBProvider";
 
 function DashboardPage() {
   const [categoryList, setCategoryList] = useState<ICategory[]>([]);
@@ -28,7 +28,7 @@ function DashboardPage() {
   const addCategoryBoxRef = useRef<HTMLDivElement>(null);
 
   const categoryRepository = useMemo(() => {
-    return dbInstance ? new CategoryRepositoryFactory(dbInstance) : null;
+    return dbInstance ? new CategoryRepositoryImpl(dbInstance) : null;
   }, [dbInstance]);
 
   const fetchCategories = useCallback(async () => {
