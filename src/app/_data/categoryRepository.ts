@@ -11,7 +11,7 @@ export interface CategoryRepository {
   remove: (id: string) => Promise<void>;
 }
 
-export class CategoryRepositoryFactory implements CategoryRepository {
+export class CategoryRepositoryImpl implements CategoryRepository {
   constructor(private db: IDBPDatabase<TrelloDBSchema>) {
     this.db = db;
   }

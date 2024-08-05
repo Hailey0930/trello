@@ -10,7 +10,7 @@ import {
   useState,
 } from "react";
 import { PlusOutlined } from "@ant-design/icons";
-import { CategoryRepositoryFactory } from "../_data/categoryRepository";
+import { CategoryRepositoryImpl } from "../_data/categoryRepository";
 import Category from "./_components/Category";
 import { Category as ICategory } from "../_types/Category";
 import useClickOutside from "./_hooks/useClickOutside";
@@ -26,7 +26,7 @@ function DashboardPage() {
   const addCategoryBoxRef = useRef<HTMLDivElement>(null);
 
   const categoryRepository = useMemo(() => {
-    return dbInstance ? new CategoryRepositoryFactory(dbInstance) : null;
+    return dbInstance ? new CategoryRepositoryImpl(dbInstance) : null;
   }, [dbInstance]);
 
   const fetchCategories = useCallback(async () => {
