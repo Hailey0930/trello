@@ -3,6 +3,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   PlusOutlined,
+  MoreOutlined,
 } from "@ant-design/icons";
 import { Input } from "antd";
 import { ChangeEvent, useRef, useState } from "react";
@@ -22,11 +23,14 @@ function Category({
 }: CategoryProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [newCategoryTitle, setNewCategoryTitle] = useState(category.title);
+  const [isMoreVisible, setIsMoreVisible] = useState(false);
 
   const dragRef = useRef<HTMLDivElement>(null);
   const editTitleInputRef = useRef<HTMLDivElement>(null);
+  const moreModalRef = useRef<HTMLDivElement>(null);
 
   useClickOutside(setIsEditingTitle, editTitleInputRef);
+  useClickOutside(setIsMoreVisible, moreModalRef);
 
   const { isDragging, drag } = useDragItem("category", category.id, index);
   const { handlerId, drop } = useDropItem(dragRef, index, onDragCategory);
@@ -49,6 +53,10 @@ function Category({
 
   const handleDelete = async () => {
     await onDeleteCategory(category.id);
+  };
+
+  const handleMore = () => {
+    setIsMoreVisible((prev) => !prev);
   };
 
   return (
@@ -96,6 +104,31 @@ function Category({
           >
             <DeleteOutlined style={{ color: "#5c5b5b" }} />
           </button>
+          <div className="relative" ref={moreModalRef}>
+            <button
+              type="button"
+              className="rounded-full px-1 hover:bg-gray-200"
+              onClick={handleMore}
+            >
+              <MoreOutlined style={{ color: "#5c5b5b" }} />
+            </button>
+            {isMoreVisible && (
+              <div className="absolute left-0 top-7 bg-white p-2 rounded-lg shadow-md">
+                <button
+                  type="button"
+                  className="w-full text-left hover:bg-gray-100 rounded-lg px-2 py-1"
+                >
+                  Copy
+                </button>
+                <button
+                  type="button"
+                  className="w-full text-left hover:bg-gray-100 rounded-lg px-2 py-1"
+                >
+                  Move
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <div className="py-1.5">
