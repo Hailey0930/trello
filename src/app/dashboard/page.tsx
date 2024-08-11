@@ -109,6 +109,7 @@ function DashboardPage() {
               onDeleteCategory={onDeleteCategory}
               onDragCategory={onDragCategory}
               onCopyCategory={onCopyCategory}
+              categoryCount={categoryList.length}
             />
           ))}
 

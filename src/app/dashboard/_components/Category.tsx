@@ -5,7 +5,7 @@ import {
   PlusOutlined,
   MoreOutlined,
 } from "@ant-design/icons";
-import { Input } from "antd";
+import { Input, Select } from "antd";
 import { ChangeEvent, useRef, useState } from "react";
 import { CategoryProps } from "@/app/_types/Category";
 import mockCardList from "@/app/_data/mock/cardFactory";
@@ -21,6 +21,7 @@ function Category({
   onDeleteCategory,
   onDragCategory,
   onCopyCategory,
+  categoryCount,
 }: CategoryProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [newCategoryTitle, setNewCategoryTitle] = useState(category.title);
@@ -29,15 +30,19 @@ function Category({
   const [newCategoryCopyTitle, setNewCategoryCopyTitle] = useState(
     category.title,
   );
+  const [isMoveModalVisible, setIsMoveModalVisible] = useState(false);
+  const [selectedPosition, setSelectedPosition] = useState(index + 1);
 
   const dragRef = useRef<HTMLDivElement>(null);
   const editTitleInputRef = useRef<HTMLDivElement>(null);
   const moreModalRef = useRef<HTMLDivElement>(null);
   const copyModalRef = useRef<HTMLDivElement>(null);
+  const moveModalRef = useRef<HTMLDivElement>(null);
 
   useClickOutside(setIsEditingTitle, editTitleInputRef);
   useClickOutside(setIsMoreVisible, moreModalRef);
   useClickOutside(setIsCopyModalVisible, copyModalRef);
+  useClickOutside(setIsMoveModalVisible, moveModalRef);
 
   const { isDragging, drag } = useDragItem("category", category.id, index);
   const { handlerId, drop } = useDropItem(dragRef, index, onDragCategory);
@@ -76,6 +81,29 @@ function Category({
 
   const handleCopy = async () => {
     await onCopyCategory(category.id, newCategoryCopyTitle);
+  };
+
+  const handleMoveModal = () => {
+    setIsMoveModalVisible((prev) => !prev);
+  };
+
+  const positionOptions = Array.from({ length: categoryCount }, (_, i) => ({
+    value: i + 1,
+    label: i === index ? `${i + 1} (current)` : `${i + 1}`,
+  }));
+
+  const handlePositionChange = (value: number) => {
+    setSelectedPosition(value);
+  };
+
+  const handleMove = async () => {
+    const newPosition = selectedPosition - 1;
+
+    if (newPosition !== index) {
+      await onDragCategory(index, newPosition);
+    }
+
+    setIsMoveModalVisible(false);
   };
 
   return (
@@ -143,6 +171,7 @@ function Category({
                 <button
                   type="button"
                   className="w-full text-left hover:bg-gray-100 rounded-lg px-2 py-1"
+                  onClick={handleMoveModal}
                 >
                   Move
                 </button>
@@ -168,6 +197,28 @@ function Category({
                   onClick={handleCopy}
                 >
                   Copy
+                </button>
+              </div>
+            )}
+            {isMoveModalVisible && (
+              <div
+                className="absolute left-0 top-7 bg-white p-2 w-32 rounded-lg shadow-md"
+                ref={moveModalRef}
+              >
+                <div className="flex flex-col mb-5 gap-2">
+                  <h1 className="font-semibold">Position</h1>
+                  <Select
+                    options={positionOptions}
+                    defaultValue={index + 1}
+                    onChange={handlePositionChange}
+                  />
+                </div>
+                <button
+                  type="button"
+                  className="w-full flex justify-center items-center text-left bg-sky-300 text-white px-2 py-1 rounded-lg hover:bg-sky-400 text-sm"
+                  onClick={handleMove}
+                >
+                  Move
                 </button>
               </div>
             )}
