@@ -20,17 +20,24 @@ function Category({
   onEditCategory,
   onDeleteCategory,
   onDragCategory,
+  onCopyCategory,
 }: CategoryProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [newCategoryTitle, setNewCategoryTitle] = useState(category.title);
   const [isMoreVisible, setIsMoreVisible] = useState(false);
+  const [isCopyModalVisible, setIsCopyModalVisible] = useState(false);
+  const [newCategoryCopyTitle, setNewCategoryCopyTitle] = useState(
+    category.title,
+  );
 
   const dragRef = useRef<HTMLDivElement>(null);
   const editTitleInputRef = useRef<HTMLDivElement>(null);
   const moreModalRef = useRef<HTMLDivElement>(null);
+  const copyModalRef = useRef<HTMLDivElement>(null);
 
   useClickOutside(setIsEditingTitle, editTitleInputRef);
   useClickOutside(setIsMoreVisible, moreModalRef);
+  useClickOutside(setIsCopyModalVisible, copyModalRef);
 
   const { isDragging, drag } = useDragItem("category", category.id, index);
   const { handlerId, drop } = useDropItem(dragRef, index, onDragCategory);
@@ -57,6 +64,18 @@ function Category({
 
   const handleMore = () => {
     setIsMoreVisible((prev) => !prev);
+  };
+
+  const handleCopyModal = () => {
+    setIsCopyModalVisible((prev) => !prev);
+  };
+
+  const handleCopyTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setNewCategoryCopyTitle(e.target.value);
+  };
+
+  const handleCopy = async () => {
+    await onCopyCategory(category.id, newCategoryCopyTitle);
   };
 
   return (
@@ -113,10 +132,11 @@ function Category({
               <MoreOutlined style={{ color: "#5c5b5b" }} />
             </button>
             {isMoreVisible && (
-              <div className="absolute left-0 top-7 bg-white p-2 rounded-lg shadow-md">
+              <div className="absolute left-0 top-7 bg-white p-2 w-28 rounded-lg shadow-md">
                 <button
                   type="button"
                   className="w-full text-left hover:bg-gray-100 rounded-lg px-2 py-1"
+                  onClick={handleCopyModal}
                 >
                   Copy
                 </button>
@@ -125,6 +145,29 @@ function Category({
                   className="w-full text-left hover:bg-gray-100 rounded-lg px-2 py-1"
                 >
                   Move
+                </button>
+              </div>
+            )}
+            {isCopyModalVisible && (
+              <div
+                className="absolute left-0 top-7 bg-white p-2 w-32 rounded-lg shadow-md"
+                ref={copyModalRef}
+              >
+                <div className="flex flex-col mb-5 gap-2">
+                  <h1 className="font-semibold">Name</h1>
+                  <Input
+                    type="text"
+                    placeholder="Category name"
+                    value={newCategoryCopyTitle}
+                    onChange={handleCopyTitleChange}
+                  />
+                </div>
+                <button
+                  type="button"
+                  className="w-full flex justify-center items-center text-left bg-sky-300 text-white px-2 py-1 rounded-lg hover:bg-sky-400 text-sm"
+                  onClick={handleCopy}
+                >
+                  Copy
                 </button>
               </div>
             )}

@@ -85,6 +85,14 @@ function DashboardPage() {
     await categoryRepository.updateAll(reorderedCategoryList);
   };
 
+  const onCopyCategory = async (id: string, newTitle: string) => {
+    const categoryToCopy = categoryList.find((category) => category.id === id);
+    if (!categoryToCopy || !categoryRepository) return;
+
+    await categoryRepository.add(newTitle, categoryToCopy.cards);
+    fetchCategories();
+  };
+
   return (
     <div>
       <header className="h-14 bg-sky-400 flex items-center pl-5 text-white">
@@ -100,6 +108,7 @@ function DashboardPage() {
               onEditCategory={onEditCategory}
               onDeleteCategory={onDeleteCategory}
               onDragCategory={onDragCategory}
+              onCopyCategory={onCopyCategory}
             />
           ))}
 

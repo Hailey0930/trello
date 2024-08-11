@@ -13,4 +13,5 @@ export interface CategoryProps {
   onEditCategory: (id: string, title: string) => Promise<void>;
   onDeleteCategory: (id: string) => Promise<void>;
   onDragCategory: (dragIndex: number, hoverIndex: number) => Promise<void>;
+  onCopyCategory: (id: string, newTitle: string) => Promise<void>;
 }
