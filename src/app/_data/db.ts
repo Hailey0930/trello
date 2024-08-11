@@ -9,12 +9,12 @@ import {
 export const DB_NAME = "trelloDB";
 
 export interface TrelloDBSchema extends DBSchema {
-  categories: {
+  [CATEGORY_STORE_NAME]: {
     key: string;
     value: Category;
     indexes: { "by-title": string };
   };
-  cards: {
+  [CARD_STORE_NAME]: {
     key: string;
     value: Card;
     indexes: { "by-categoryId": string };
@@ -24,7 +24,7 @@ export interface TrelloDBSchema extends DBSchema {
 export const initializeDB = async (
   storeNames: (typeof CATEGORY_STORE_NAME | typeof CARD_STORE_NAME)[],
 ): Promise<IDBPDatabase<TrelloDBSchema>> => {
-  const initializedDB = await openDB<TrelloDBSchema>(DB_NAME, 1, {
+  const initializedDB = await openDB<TrelloDBSchema>(DB_NAME, 2, {
     upgrade(db) {
       storeNames.forEach((storeName) => {
         if (!db.objectStoreNames.contains(storeName)) {

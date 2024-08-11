@@ -6,9 +6,19 @@ import {
   MoreOutlined,
 } from "@ant-design/icons";
 import { Input, Select } from "antd";
-import { ChangeEvent, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { CategoryProps } from "@/app/_types/Category";
-import mockCardList from "@/app/_data/mock/cardFactory";
+import { DBContext } from "@/app/DBProvider";
+import { CardRepositoryImpl } from "@/app/_data/cardRepository";
+import { Card as ICard } from "@/app/_types/Card";
 import useClickOutside from "../_hooks/useClickOutside";
 import Card from "./Card";
 import useDragItem from "../_hooks/dnd/useDragItem";
@@ -32,6 +42,7 @@ function Category({
   );
   const [isMoveModalVisible, setIsMoveModalVisible] = useState(false);
   const [selectedPosition, setSelectedPosition] = useState(index + 1);
+  const [cardList, setCardList] = useState<ICard[]>([]);
 
   const dragRef = useRef<HTMLDivElement>(null);
   const editTitleInputRef = useRef<HTMLDivElement>(null);
@@ -49,6 +60,23 @@ function Category({
   drag(drop(dragRef));
 
   const opacity = isDragging ? 0 : 1;
+
+  const dbInstance = useContext(DBContext);
+
+  const cardRepository = useMemo(() => {
+    return dbInstance ? new CardRepositoryImpl(dbInstance) : null;
+  }, [dbInstance]);
+
+  const fetchCards = useCallback(async () => {
+    if (!cardRepository) return;
+
+    const categories = await cardRepository.getAll();
+    setCardList(categories);
+  }, [cardRepository]);
+
+  useEffect(() => {
+    fetchCards();
+  }, [dbInstance, fetchCards]);
 
   const handleEdit = () => {
     setIsEditingTitle(true);
@@ -228,7 +256,7 @@ function Category({
       </div>
       <div className="py-1.5">
         <div className="flex flex-col gap-3">
-          {mockCardList.map((card) => (
+          {cardList.map((card) => (
             <Card key={card.id} title={card.title} type={card.type} />
           ))}
         </div>
