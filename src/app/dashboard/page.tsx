@@ -17,6 +17,7 @@ import Category from "./_components/Category";
 import { Category as ICategory } from "../_types/Category";
 import useClickOutside from "./_hooks/useClickOutside";
 import { DBContext } from "../DBProvider";
+import reorderCategories from "./_util/reorderCategories";
 
 function DashboardPage() {
   const [categoryList, setCategoryList] = useState<ICategory[]>([]);
@@ -71,18 +72,13 @@ function DashboardPage() {
     fetchCategories();
   };
 
-  const onDragCategory = async (dragIndex: number, hoverIndex: number) => {
+  const onDragCategory = async (startIndex: number, endIndex: number) => {
     if (!categoryRepository) return;
 
-    const updatedCategoryList = [...categoryList];
-    const [moved] = updatedCategoryList.splice(dragIndex, 1);
-    updatedCategoryList.splice(hoverIndex, 0, moved);
-
-    const reorderedCategoryList = updatedCategoryList.map(
-      (category, index) => ({
-        ...category,
-        order: index,
-      }),
+    const reorderedCategoryList = reorderCategories(
+      categoryList,
+      startIndex,
+      endIndex,
     );
 
     setCategoryList(reorderedCategoryList);
