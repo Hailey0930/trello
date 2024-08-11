@@ -81,6 +81,7 @@ function Category({
 
   const handleCopy = async () => {
     await onCopyCategory(category.id, newCategoryCopyTitle);
+    setIsCopyModalVisible(false);
   };
 
   const handleMoveModal = () => {
