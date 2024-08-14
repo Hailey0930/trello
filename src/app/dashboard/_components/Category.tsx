@@ -100,7 +100,8 @@ function Category({
   };
 
   const handleCopyModal = () => {
-    setIsCopyModalVisible((prev) => !prev);
+    setIsCopyModalVisible(true);
+    setIsMoreVisible(false);
   };
 
   const handleCopyTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -113,7 +114,8 @@ function Category({
   };
 
   const handleMoveModal = () => {
-    setIsMoveModalVisible((prev) => !prev);
+    setIsMoveModalVisible(true);
+    setIsMoreVisible(false);
   };
 
   const positionOptions = Array.from({ length: categoryCount }, (_, i) => ({
