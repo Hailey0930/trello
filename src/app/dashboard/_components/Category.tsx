@@ -41,6 +41,7 @@ function Category({
     category.title,
   );
   const [isMoveModalVisible, setIsMoveModalVisible] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedPosition, setSelectedPosition] = useState(index + 1);
   const [cardList, setCardList] = useState<ICard[]>([]);
 
@@ -53,7 +54,7 @@ function Category({
   useClickOutside(setIsEditingTitle, editTitleInputRef);
   useClickOutside(setIsMoreVisible, moreModalRef);
   useClickOutside(setIsCopyModalVisible, copyModalRef);
-  useClickOutside(setIsMoveModalVisible, moveModalRef);
+  useClickOutside(setIsMoveModalVisible, moveModalRef, isDropdownOpen);
 
   const { isDragging, drag } = useDragItem("category", category.id, index);
   const { handlerId, drop } = useDropItem(dragRef, index, onDragCategory);
@@ -242,6 +243,7 @@ function Category({
                     options={positionOptions}
                     defaultValue={index + 1}
                     onChange={handlePositionChange}
+                    onDropdownVisibleChange={(open) => setIsDropdownOpen(open)}
                   />
                 </div>
                 <button
