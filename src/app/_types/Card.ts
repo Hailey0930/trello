@@ -4,6 +4,7 @@ export interface Card {
   id: string;
   title: string;
   type: CardType;
+  order: number;
 }
 
 export interface CardProps {

@@ -3,12 +3,14 @@ import { v4 as uuidv4 } from "uuid";
 import { Category } from "../_types/Category";
 import { TrelloDBSchema } from "./db";
 import { CATEGORY_STORE_NAME } from "../_constant/constants";
+import { Card } from "../_types/Card";
 
 export interface CategoryRepository {
   getAll: () => Promise<Category[]>;
-  add: (title: string) => Promise<Category>;
+  add: (title: string, cards?: Card[]) => Promise<Category>;
   edit: (id: string, title: string) => Promise<Category>;
   remove: (id: string) => Promise<void>;
+  updateAll: (categories: Category[]) => Promise<void>;
 }
 
 export class CategoryRepositoryImpl implements CategoryRepository {
@@ -17,17 +19,18 @@ export class CategoryRepositoryImpl implements CategoryRepository {
   }
 
   getAll = async (): Promise<Category[]> => {
-    return this.db.getAll(CATEGORY_STORE_NAME);
+    const allCategories = await this.db.getAll(CATEGORY_STORE_NAME);
+    return allCategories.sort((a, b) => a.order - b.order);
   };
 
-  add = async (title: string) => {
+  add = async (title: string, cards?: Card[]) => {
     const categories = await this.getAll();
     const newOrder = categories.length;
     const newCategory = {
       id: uuidv4(),
       title,
       order: newOrder,
-      cards: [],
+      cards: cards || [],
     };
 
     await this.db.add(CATEGORY_STORE_NAME, newCategory);
@@ -59,5 +62,11 @@ export class CategoryRepositoryImpl implements CategoryRepository {
     }
 
     await this.db.delete(CATEGORY_STORE_NAME, id);
+  };
+
+  updateAll = async (categories: Category[]) => {
+    await Promise.all(
+      categories.map((category) => this.db.put(CATEGORY_STORE_NAME, category)),
+    );
   };
 }
