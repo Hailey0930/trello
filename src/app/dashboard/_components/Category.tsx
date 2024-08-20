@@ -3,11 +3,22 @@ import {
   DeleteOutlined,
   EditOutlined,
   PlusOutlined,
+  MoreOutlined,
 } from "@ant-design/icons";
-import { Input } from "antd";
-import { ChangeEvent, useRef, useState } from "react";
+import { Input, Select } from "antd";
+import {
+  ChangeEvent,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { CategoryProps } from "@/app/_types/Category";
-import mockCardList from "@/app/_data/mock/cardFactory";
+import { DBContext } from "@/app/DBProvider";
+import { CardRepositoryImpl } from "@/app/_data/cardRepository";
+import { Card as ICard } from "@/app/_types/Card";
 import useClickOutside from "../_hooks/useClickOutside";
 import Card from "./Card";
 import useDragItem from "../_hooks/dnd/useDragItem";
@@ -19,20 +30,54 @@ function Category({
   onEditCategory,
   onDeleteCategory,
   onDragCategory,
+  onCopyCategory,
+  categoryCount,
 }: CategoryProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [newCategoryTitle, setNewCategoryTitle] = useState(category.title);
+  const [isMoreVisible, setIsMoreVisible] = useState(false);
+  const [isCopyModalVisible, setIsCopyModalVisible] = useState(false);
+  const [newCategoryCopyTitle, setNewCategoryCopyTitle] = useState(
+    category.title,
+  );
+  const [isMoveModalVisible, setIsMoveModalVisible] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedPosition, setSelectedPosition] = useState(index + 1);
+  const [cardList, setCardList] = useState<ICard[]>([]);
 
   const dragRef = useRef<HTMLDivElement>(null);
   const editTitleInputRef = useRef<HTMLDivElement>(null);
+  const moreModalRef = useRef<HTMLDivElement>(null);
+  const copyModalRef = useRef<HTMLDivElement>(null);
+  const moveModalRef = useRef<HTMLDivElement>(null);
 
   useClickOutside(setIsEditingTitle, editTitleInputRef);
+  useClickOutside(setIsMoreVisible, moreModalRef);
+  useClickOutside(setIsCopyModalVisible, copyModalRef);
+  useClickOutside(setIsMoveModalVisible, moveModalRef, isDropdownOpen);
 
   const { isDragging, drag } = useDragItem("category", category.id, index);
   const { handlerId, drop } = useDropItem(dragRef, index, onDragCategory);
   drag(drop(dragRef));
 
   const opacity = isDragging ? 0 : 1;
+
+  const dbInstance = useContext(DBContext);
+
+  const cardRepository = useMemo(() => {
+    return dbInstance ? new CardRepositoryImpl(dbInstance) : null;
+  }, [dbInstance]);
+
+  const fetchCards = useCallback(async () => {
+    if (!cardRepository) return;
+
+    const categories = await cardRepository.getAll();
+    setCardList(categories);
+  }, [cardRepository]);
+
+  useEffect(() => {
+    fetchCards();
+  }, [dbInstance, fetchCards]);
 
   const handleEdit = () => {
     setIsEditingTitle(true);
@@ -49,6 +94,48 @@ function Category({
 
   const handleDelete = async () => {
     await onDeleteCategory(category.id);
+  };
+
+  const handleMore = () => {
+    setIsMoreVisible((prev) => !prev);
+  };
+
+  const handleCopyModal = () => {
+    setIsCopyModalVisible(true);
+    setIsMoreVisible(false);
+  };
+
+  const handleCopyTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setNewCategoryCopyTitle(e.target.value);
+  };
+
+  const handleCopy = async () => {
+    await onCopyCategory(category.id, newCategoryCopyTitle);
+    setIsCopyModalVisible(false);
+  };
+
+  const handleMoveModal = () => {
+    setIsMoveModalVisible(true);
+    setIsMoreVisible(false);
+  };
+
+  const positionOptions = Array.from({ length: categoryCount }, (_, i) => ({
+    value: i + 1,
+    label: i === index ? `${i + 1} (current)` : `${i + 1}`,
+  }));
+
+  const handlePositionChange = (value: number) => {
+    setSelectedPosition(value);
+  };
+
+  const handleMove = async () => {
+    const newPosition = selectedPosition - 1;
+
+    if (newPosition !== index) {
+      await onDragCategory(index, newPosition);
+    }
+
+    setIsMoveModalVisible(false);
   };
 
   return (
@@ -96,11 +183,84 @@ function Category({
           >
             <DeleteOutlined style={{ color: "#5c5b5b" }} />
           </button>
+          <div className="relative" ref={moreModalRef}>
+            <button
+              type="button"
+              className="rounded-full px-1 hover:bg-gray-200"
+              onClick={handleMore}
+            >
+              <MoreOutlined style={{ color: "#5c5b5b" }} />
+            </button>
+            {isMoreVisible && (
+              <div className="absolute left-0 top-7 bg-white p-2 w-28 rounded-lg shadow-md">
+                <button
+                  type="button"
+                  className="w-full text-left hover:bg-gray-100 rounded-lg px-2 py-1"
+                  onClick={handleCopyModal}
+                >
+                  Copy
+                </button>
+                <button
+                  type="button"
+                  className="w-full text-left hover:bg-gray-100 rounded-lg px-2 py-1"
+                  onClick={handleMoveModal}
+                >
+                  Move
+                </button>
+              </div>
+            )}
+            {isCopyModalVisible && (
+              <div
+                className="absolute left-0 top-7 bg-white p-2 w-32 rounded-lg shadow-md"
+                ref={copyModalRef}
+              >
+                <div className="flex flex-col mb-5 gap-2">
+                  <h1 className="font-semibold">Name</h1>
+                  <Input
+                    type="text"
+                    placeholder="Category name"
+                    value={newCategoryCopyTitle}
+                    onChange={handleCopyTitleChange}
+                  />
+                </div>
+                <button
+                  type="button"
+                  className="w-full flex justify-center items-center text-left bg-sky-300 text-white px-2 py-1 rounded-lg hover:bg-sky-400 text-sm"
+                  onClick={handleCopy}
+                >
+                  Copy
+                </button>
+              </div>
+            )}
+            {isMoveModalVisible && (
+              <div
+                className="absolute left-0 top-7 bg-white p-2 w-32 rounded-lg shadow-md"
+                ref={moveModalRef}
+              >
+                <div className="flex flex-col mb-5 gap-2">
+                  <h1 className="font-semibold">Position</h1>
+                  <Select
+                    options={positionOptions}
+                    defaultValue={index + 1}
+                    onChange={handlePositionChange}
+                    onDropdownVisibleChange={(open) => setIsDropdownOpen(open)}
+                  />
+                </div>
+                <button
+                  type="button"
+                  className="w-full flex justify-center items-center text-left bg-sky-300 text-white px-2 py-1 rounded-lg hover:bg-sky-400 text-sm"
+                  onClick={handleMove}
+                >
+                  Move
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <div className="py-1.5">
         <div className="flex flex-col gap-3">
-          {mockCardList.map((card) => (
+          {cardList.map((card) => (
             <Card key={card.id} title={card.title} type={card.type} />
           ))}
         </div>
