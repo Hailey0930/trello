@@ -3,10 +3,15 @@ import { Dispatch, SetStateAction, RefObject, useEffect } from "react";
 export default function useClickOutside(
   setIsOpen: Dispatch<SetStateAction<boolean>>,
   ref: RefObject<HTMLDivElement>,
+  isDropdownOpen?: boolean,
 ) {
   useEffect(() => {
     const listener = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
+      if (
+        !isDropdownOpen &&
+        ref.current &&
+        !ref.current.contains(e.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -16,5 +21,5 @@ export default function useClickOutside(
     return () => {
       document.removeEventListener("mousedown", listener as EventListener);
     };
-  }, [setIsOpen, ref]);
+  }, [setIsOpen, ref, isDropdownOpen]);
 }

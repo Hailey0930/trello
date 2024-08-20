@@ -6,9 +6,19 @@ import {
   MoreOutlined,
 } from "@ant-design/icons";
 import { Input, Select } from "antd";
-import { ChangeEvent, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { CategoryProps } from "@/app/_types/Category";
-import mockCardList from "@/app/_data/mock/cardFactory";
+import { DBContext } from "@/app/DBProvider";
+import { CardRepositoryImpl } from "@/app/_data/cardRepository";
+import { Card as ICard } from "@/app/_types/Card";
 import useClickOutside from "../_hooks/useClickOutside";
 import Card from "./Card";
 import useDragItem from "../_hooks/dnd/useDragItem";
@@ -31,7 +41,9 @@ function Category({
     category.title,
   );
   const [isMoveModalVisible, setIsMoveModalVisible] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedPosition, setSelectedPosition] = useState(index + 1);
+  const [cardList, setCardList] = useState<ICard[]>([]);
 
   const dragRef = useRef<HTMLDivElement>(null);
   const editTitleInputRef = useRef<HTMLDivElement>(null);
@@ -42,13 +54,30 @@ function Category({
   useClickOutside(setIsEditingTitle, editTitleInputRef);
   useClickOutside(setIsMoreVisible, moreModalRef);
   useClickOutside(setIsCopyModalVisible, copyModalRef);
-  useClickOutside(setIsMoveModalVisible, moveModalRef);
+  useClickOutside(setIsMoveModalVisible, moveModalRef, isDropdownOpen);
 
   const { isDragging, drag } = useDragItem("category", category.id, index);
   const { handlerId, drop } = useDropItem(dragRef, index, onDragCategory);
   drag(drop(dragRef));
 
   const opacity = isDragging ? 0 : 1;
+
+  const dbInstance = useContext(DBContext);
+
+  const cardRepository = useMemo(() => {
+    return dbInstance ? new CardRepositoryImpl(dbInstance) : null;
+  }, [dbInstance]);
+
+  const fetchCards = useCallback(async () => {
+    if (!cardRepository) return;
+
+    const categories = await cardRepository.getAll();
+    setCardList(categories);
+  }, [cardRepository]);
+
+  useEffect(() => {
+    fetchCards();
+  }, [dbInstance, fetchCards]);
 
   const handleEdit = () => {
     setIsEditingTitle(true);
@@ -72,7 +101,8 @@ function Category({
   };
 
   const handleCopyModal = () => {
-    setIsCopyModalVisible((prev) => !prev);
+    setIsCopyModalVisible(true);
+    setIsMoreVisible(false);
   };
 
   const handleCopyTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -85,7 +115,8 @@ function Category({
   };
 
   const handleMoveModal = () => {
-    setIsMoveModalVisible((prev) => !prev);
+    setIsMoveModalVisible(true);
+    setIsMoreVisible(false);
   };
 
   const positionOptions = Array.from({ length: categoryCount }, (_, i) => ({
@@ -212,6 +243,7 @@ function Category({
                     options={positionOptions}
                     defaultValue={index + 1}
                     onChange={handlePositionChange}
+                    onDropdownVisibleChange={(open) => setIsDropdownOpen(open)}
                   />
                 </div>
                 <button
@@ -228,7 +260,7 @@ function Category({
       </div>
       <div className="py-1.5">
         <div className="flex flex-col gap-3">
-          {mockCardList.map((card) => (
+          {cardList.map((card) => (
             <Card key={card.id} title={card.title} type={card.type} />
           ))}
         </div>
