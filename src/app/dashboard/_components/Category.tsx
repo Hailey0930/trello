@@ -44,17 +44,21 @@ function Category({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedPosition, setSelectedPosition] = useState(index + 1);
   const [cardList, setCardList] = useState<ICard[]>([]);
+  const [isAddingCard, setIsAddingCard] = useState(false);
+  const [newCardTitle, setNewCardTitle] = useState("");
 
   const dragRef = useRef<HTMLDivElement>(null);
   const editTitleInputRef = useRef<HTMLDivElement>(null);
   const moreModalRef = useRef<HTMLDivElement>(null);
   const copyModalRef = useRef<HTMLDivElement>(null);
   const moveModalRef = useRef<HTMLDivElement>(null);
+  const addCardRef = useRef<HTMLDivElement>(null);
 
   useClickOutside(setIsEditingTitle, editTitleInputRef);
   useClickOutside(setIsMoreVisible, moreModalRef);
   useClickOutside(setIsCopyModalVisible, copyModalRef);
   useClickOutside(setIsMoveModalVisible, moveModalRef, isDropdownOpen);
+  useClickOutside(setIsAddingCard, addCardRef);
 
   const { isDragging, drag } = useDragItem("category", category.id, index);
   const { handlerId, drop } = useDropItem(dragRef, index, onDragCategory);
@@ -71,9 +75,9 @@ function Category({
   const fetchCards = useCallback(async () => {
     if (!cardRepository) return;
 
-    const categories = await cardRepository.getAll();
+    const categories = await cardRepository.getAll(category.id);
     setCardList(categories);
-  }, [cardRepository]);
+  }, [cardRepository, category.id]);
 
   useEffect(() => {
     fetchCards();
@@ -136,6 +140,24 @@ function Category({
     }
 
     setIsMoveModalVisible(false);
+  };
+
+  const handleAddCard = async () => {
+    setIsAddingCard(true);
+  };
+
+  const handleSaveCard = async () => {
+    if (newCardTitle.trim() === "" || !cardRepository) return;
+
+    await cardRepository.add(newCardTitle, category.id);
+    fetchCards();
+    setIsAddingCard(false);
+    setNewCardTitle("");
+  };
+
+  const handleCancelSaveCard = () => {
+    setIsAddingCard(false);
+    setNewCardTitle("");
   };
 
   return (
@@ -269,10 +291,37 @@ function Category({
         <button
           type="button"
           className="flex items-center gap-2 text-sm bg-sky-300 text-white px-2 py-1 rounded-lg hover:bg-sky-400"
+          onClick={handleAddCard}
         >
           <PlusOutlined />
           <div> Add Card</div>
         </button>
+        {isAddingCard && (
+          <div className="flex flex-col gap-2 mt-2" ref={addCardRef}>
+            <Input
+              placeholder="Card name"
+              autoFocus
+              onChange={(e) => setNewCardTitle(e.target.value)}
+              value={newCardTitle}
+            />
+            <div className="flex justify-center items-center gap-2">
+              <button
+                type="button"
+                className="bg-emerald-400 text-white rounded-lg px-2 py-1 font-semibold"
+                onClick={handleSaveCard}
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                className="bg-rose-600 text-white rounded-lg px-2 py-1 font-semibold"
+                onClick={handleCancelSaveCard}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
       </footer>
     </div>
   );
