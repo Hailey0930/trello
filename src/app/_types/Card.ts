@@ -5,6 +5,7 @@ export interface Card {
   title: string;
   type: CardType;
   order: number;
+  categoryId: string;
 }
 
 export interface CardProps {
