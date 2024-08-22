@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from "react";
 import { Card } from "./Card";
 
 export interface Category {
@@ -19,4 +20,7 @@ export interface CategoryProps {
 
 export interface CategoryFooterProps {
   onSaveCard: (title: string) => Promise<void>;
+  onGetTemplateCards: (
+    setTemplateCardList: Dispatch<SetStateAction<Card[]>>,
+  ) => Promise<void>;
 }

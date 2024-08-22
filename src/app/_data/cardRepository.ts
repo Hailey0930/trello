@@ -6,6 +6,7 @@ import { CARD_STORE_NAME } from "../_constant/constants";
 
 export interface CardRepository {
   getAll: (categoryId: string) => Promise<Card[]>;
+  getTemplateCards: (categoryId: string) => Promise<Card[]>;
   add: (title: string, categoryId: string) => Promise<Card>;
 }
 
@@ -18,6 +19,14 @@ export class CardRepositoryImpl implements CardRepository {
     const allCards = await this.db.getAll(CARD_STORE_NAME);
     const filteredCards = allCards.filter(
       (card) => card.categoryId === categoryId,
+    );
+    return filteredCards.sort((a, b) => a.order - b.order);
+  };
+
+  getTemplateCards = async (categoryId: string): Promise<Card[]> => {
+    const allCards = await this.db.getAll(CARD_STORE_NAME);
+    const filteredCards = allCards.filter(
+      (card) => card.categoryId === categoryId && card.type === "template",
     );
     return filteredCards.sort((a, b) => a.order - b.order);
   };

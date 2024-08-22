@@ -9,14 +9,19 @@ import {
 import { Input } from "antd";
 import { useRef, useState } from "react";
 import { CategoryFooterProps } from "@/app/_types/Category";
+import { Card as ICard } from "@/app/_types/Card";
 import useClickOutside from "../_hooks/useClickOutside";
 import Card from "./Card";
 
-function CategoryFooter({ onSaveCard }: CategoryFooterProps) {
+function CategoryFooter({
+  onSaveCard,
+  onGetTemplateCards,
+}: CategoryFooterProps) {
   const [isAddingCard, setIsAddingCard] = useState(false);
   const [newCardTitle, setNewCardTitle] = useState("");
   const [isTemplateModalVisible, setIsTemplateModalVisible] = useState(false);
   const [isSelectingTemplate, setIsSelectingTemplate] = useState(false);
+  const [templateCardList, setTemplateCardList] = useState<ICard[]>([]);
 
   const addCardRef = useRef<HTMLDivElement>(null);
   const templateModalRef = useRef<HTMLDivElement>(null);
@@ -43,6 +48,7 @@ function CategoryFooter({ onSaveCard }: CategoryFooterProps) {
 
   const handleTemplate = () => {
     setIsTemplateModalVisible(!isTemplateModalVisible);
+    onGetTemplateCards(setTemplateCardList);
   };
 
   const handleCloseTemplateModal = () => {
@@ -120,10 +126,23 @@ function CategoryFooter({ onSaveCard }: CategoryFooterProps) {
             >
               <CloseOutlined style={{ color: "#5c5b5b" }} />
             </button>
-            <div className="flex flex-col justify-center items-center gap-2 w-full">
-              <div className="w-full" onClick={handleSelectTemplate}>
-                <Card title="test" type="template" />
-              </div>
+            <div className="flex flex-col justify-center items-center gap-2 w-full mt-2">
+              {templateCardList.length > 0 ? (
+                templateCardList.map((card) => (
+                  <div
+                    className="w-full"
+                    key={card.id}
+                    onClick={handleSelectTemplate}
+                  >
+                    <Card title="test" type="template" />
+                  </div>
+                ))
+              ) : (
+                <div className="w-full text-xs text-center">
+                  You don’t have any templates. <br /> Create a template to make
+                  copying cards easy.
+                </div>
+              )}
             </div>
             <button
               type="button"

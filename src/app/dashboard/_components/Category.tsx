@@ -7,6 +7,8 @@ import {
 import { Input, Select } from "antd";
 import {
   ChangeEvent,
+  Dispatch,
+  SetStateAction,
   useCallback,
   useContext,
   useEffect,
@@ -145,6 +147,15 @@ function Category({
     fetchCards();
   };
 
+  const onGetTemplateCards = async (
+    setTemplateCardList: Dispatch<SetStateAction<ICard[]>>,
+  ) => {
+    if (!cardRepository) return;
+
+    const templateCards = await cardRepository.getTemplateCards(category.id);
+    setTemplateCardList(templateCards);
+  };
+
   return (
     <div
       ref={dragRef}
@@ -272,7 +283,10 @@ function Category({
           ))}
         </div>
       </div>
-      <CategoryFooter onSaveCard={onSaveCard} />
+      <CategoryFooter
+        onSaveCard={onSaveCard}
+        onGetTemplateCards={onGetTemplateCards}
+      />
     </div>
   );
 }
