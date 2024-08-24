@@ -152,7 +152,7 @@ function Category({
   ) => {
     if (!cardRepository) return;
 
-    const templateCards = await cardRepository.getTemplateCards(category.id);
+    const templateCards = await cardRepository.getTemplateCards();
     setTemplateCardList(templateCards);
   };
 

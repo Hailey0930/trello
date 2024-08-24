@@ -24,11 +24,9 @@ export class CardRepositoryImpl implements CardRepository {
     return filteredCards.sort((a, b) => a.order - b.order);
   };
 
-  getTemplateCards = async (categoryId: string): Promise<Card[]> => {
+  getTemplateCards = async (): Promise<Card[]> => {
     const allCards = await this.db.getAll(CARD_STORE_NAME);
-    const filteredCards = allCards.filter(
-      (card) => card.categoryId === categoryId && card.type === "template",
-    );
+    const filteredCards = allCards.filter((card) => card.type === "template");
     return filteredCards.sort((a, b) => a.order - b.order);
   };
 
