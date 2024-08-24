@@ -156,7 +156,7 @@ function CategoryFooter({
                     key={card.id}
                     onClick={handleSelectTemplate}
                   >
-                    <Card title="test" type="template" />
+                    <Card title={card.title} type={card.type} />
                   </div>
                 ))
               ) : (
