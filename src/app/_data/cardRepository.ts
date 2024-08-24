@@ -8,6 +8,7 @@ export interface CardRepository {
   getAll: (categoryId: string) => Promise<Card[]>;
   getTemplateCards: (categoryId: string) => Promise<Card[]>;
   add: (title: string, categoryId: string) => Promise<Card>;
+  addTemplateCard: (title: string, categoryId: string) => Promise<Card>;
 }
 
 export class CardRepositoryImpl implements CardRepository {
@@ -38,6 +39,21 @@ export class CardRepositoryImpl implements CardRepository {
       id: uuidv4(),
       title,
       type: "normal",
+      order: newOrder,
+      categoryId,
+    };
+
+    await this.db.add(CARD_STORE_NAME, newCard);
+    return newCard;
+  };
+
+  addTemplateCard = async (title: string, categoryId: string) => {
+    const cards = await this.getAll(categoryId);
+    const newOrder = cards.length;
+    const newCard: Card = {
+      id: uuidv4(),
+      title,
+      type: "template",
       order: newOrder,
       categoryId,
     };

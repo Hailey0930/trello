@@ -16,20 +16,25 @@ import Card from "./Card";
 function CategoryFooter({
   onSaveCard,
   onGetTemplateCards,
+  onAddTemplateCard,
 }: CategoryFooterProps) {
   const [isAddingCard, setIsAddingCard] = useState(false);
   const [newCardTitle, setNewCardTitle] = useState("");
   const [isTemplateModalVisible, setIsTemplateModalVisible] = useState(false);
   const [isSelectingTemplate, setIsSelectingTemplate] = useState(false);
   const [templateCardList, setTemplateCardList] = useState<ICard[]>([]);
+  const [isCreatingTemplate, setIsCreatingTemplate] = useState(false);
+  const [newTemplateTitle, setNewTemplateTitle] = useState("");
 
   const addCardRef = useRef<HTMLDivElement>(null);
   const templateModalRef = useRef<HTMLDivElement>(null);
   const selectTemplateRef = useRef<HTMLDivElement>(null);
+  const templateTitleRef = useRef<HTMLDivElement>(null);
 
   useClickOutside(setIsAddingCard, addCardRef);
   useClickOutside(setIsTemplateModalVisible, templateModalRef);
   useClickOutside(setIsSelectingTemplate, selectTemplateRef);
+  useClickOutside(setIsCreatingTemplate, templateTitleRef);
 
   const handleAddCard = async () => {
     setIsAddingCard(true);
@@ -53,6 +58,7 @@ function CategoryFooter({
 
   const handleCloseTemplateModal = () => {
     setIsTemplateModalVisible(false);
+    setIsCreatingTemplate(false);
   };
 
   const handleSelectTemplate = () => {
@@ -67,6 +73,22 @@ function CategoryFooter({
 
   const handleCloseSelectTemplate = () => {
     setIsSelectingTemplate(false);
+  };
+
+  const handleCreateCard = () => {
+    setIsCreatingTemplate(true);
+  };
+
+  const handleCancelCreateCard = () => {
+    setIsCreatingTemplate(false);
+    setNewTemplateTitle("");
+  };
+
+  const handleAddTemplateCard = async () => {
+    await onAddTemplateCard(newTemplateTitle);
+    setIsCreatingTemplate(false);
+    setNewTemplateTitle("");
+    setIsTemplateModalVisible(false);
   };
 
   return (
@@ -144,9 +166,40 @@ function CategoryFooter({
                 </div>
               )}
             </div>
+            {isCreatingTemplate && (
+              <div
+                className="flex flex-col gap-1 w-full"
+                ref={templateTitleRef}
+              >
+                <Input
+                  type="text"
+                  placeholder="Template title"
+                  autoFocus
+                  value={newTemplateTitle}
+                  onChange={(e) => setNewTemplateTitle(e.target.value)}
+                />
+                <div className="flex gap-2 item-center">
+                  <button
+                    type="button"
+                    className="flex justify-center items-center text-sm bg-sky-300 text-white px-2 py-1 rounded-lg hover:bg-sky-400"
+                    onClick={handleAddTemplateCard}
+                  >
+                    Add
+                  </button>
+                  <button
+                    type="button"
+                    className="rounded-full px-1 hover:bg-gray-200"
+                    onClick={handleCancelCreateCard}
+                  >
+                    <CloseOutlined style={{ color: "#5c5b5b" }} />
+                  </button>
+                </div>
+              </div>
+            )}
             <button
               type="button"
               className="flex items-center justify-center gap-2 mt-2 w-full px-1 hover:bg-gray-200"
+              onClick={handleCreateCard}
             >
               <PlusOutlined style={{ color: "#5c5b5b" }} />
               Create a new template

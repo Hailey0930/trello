@@ -156,6 +156,13 @@ function Category({
     setTemplateCardList(templateCards);
   };
 
+  const onAddTemplateCard = async (title: string) => {
+    if (!cardRepository) return;
+
+    await cardRepository.addTemplateCard(title, category.id);
+    fetchCards();
+  };
+
   return (
     <div
       ref={dragRef}
@@ -286,6 +293,7 @@ function Category({
       <CategoryFooter
         onSaveCard={onSaveCard}
         onGetTemplateCards={onGetTemplateCards}
+        onAddTemplateCard={onAddTemplateCard}
       />
     </div>
   );

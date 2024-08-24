@@ -23,4 +23,5 @@ export interface CategoryFooterProps {
   onGetTemplateCards: (
     setTemplateCardList: Dispatch<SetStateAction<Card[]>>,
   ) => Promise<void>;
+  onAddTemplateCard: (title: string) => Promise<void>;
 }
