@@ -95,7 +95,9 @@ function Category({
   };
 
   const handleDelete = async () => {
-    await onDeleteCategory(category.id);
+    if (!cardRepository) return;
+
+    await onDeleteCategory(category.id, cardRepository.removeCardsByCategoryId);
   };
 
   const handleMore = () => {

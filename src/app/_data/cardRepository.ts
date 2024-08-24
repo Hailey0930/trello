@@ -9,6 +9,7 @@ export interface CardRepository {
   getTemplateCards: (categoryId: string) => Promise<Card[]>;
   add: (title: string, categoryId: string) => Promise<Card>;
   addTemplateCard: (title: string, categoryId: string) => Promise<Card>;
+  removeCardsByCategoryId: (categoryId: string) => Promise<void>;
 }
 
 export class CardRepositoryImpl implements CardRepository {
@@ -58,5 +59,12 @@ export class CardRepositoryImpl implements CardRepository {
 
     await this.db.add(CARD_STORE_NAME, newCard);
     return newCard;
+  };
+
+  removeCardsByCategoryId = async (categoryId: string) => {
+    const allCards = await this.getAll(categoryId);
+    await Promise.all(
+      allCards.map((card) => this.db.delete(CARD_STORE_NAME, card.id)),
+    );
   };
 }

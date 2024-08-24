@@ -12,7 +12,10 @@ export interface CategoryProps {
   index: number;
   category: Category;
   onEditCategory: (id: string, title: string) => Promise<void>;
-  onDeleteCategory: (id: string) => Promise<void>;
+  onDeleteCategory: (
+    id: string,
+    removeCardsByCategoryId: (categoryId: string) => Promise<void>,
+  ) => Promise<void>;
   onDragCategory: (dragIndex: number, hoverIndex: number) => Promise<void>;
   onCopyCategory: (id: string, newTitle: string) => Promise<void>;
   categoryCount: number;

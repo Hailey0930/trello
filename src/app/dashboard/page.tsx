@@ -65,10 +65,13 @@ function DashboardPage() {
     fetchCategories();
   };
 
-  const onDeleteCategory = async (id: string) => {
+  const onDeleteCategory = async (
+    id: string,
+    removeCardsByCategoryId: (categoryId: string) => Promise<void>,
+  ) => {
     if (!categoryRepository) return;
 
-    await categoryRepository.remove(id);
+    await categoryRepository.remove(id, removeCardsByCategoryId);
     fetchCategories();
   };
 
