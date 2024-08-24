@@ -92,24 +92,9 @@ function CategoryFooter({
   };
 
   return (
-    <footer className="relative p-2 flex justify-between items-center">
-      <button
-        type="button"
-        className="flex items-center gap-2 text-sm bg-sky-300 text-white px-2 py-1 rounded-lg hover:bg-sky-400"
-        onClick={handleAddCard}
-      >
-        <PlusOutlined />
-        <div> Add Card</div>
-      </button>
-      <button
-        type="button"
-        className=" rounded-full px-1 hover:bg-gray-200"
-        onClick={handleTemplate}
-      >
-        <CopyOutlined style={{ color: "#5c5b5b" }} />
-      </button>
+    <footer className="relative p-2 flex flex-col justify-between items-center">
       {isAddingCard && (
-        <div className="flex flex-col gap-2 mt-2" ref={addCardRef}>
+        <div className="flex flex-col gap-2 mt-2 mb-2 w-full" ref={addCardRef}>
           <Input
             placeholder="Card name"
             autoFocus
@@ -134,6 +119,24 @@ function CategoryFooter({
           </div>
         </div>
       )}
+      <div className="flex justify-between w-full">
+        <button
+          type="button"
+          className="flex items-center gap-2 text-sm bg-sky-300 text-white px-2 py-1 rounded-lg hover:bg-sky-400"
+          onClick={handleAddCard}
+        >
+          <PlusOutlined />
+          <div> Add Card</div>
+        </button>
+        <button
+          type="button"
+          className=" rounded-full px-1 hover:bg-gray-200"
+          onClick={handleTemplate}
+        >
+          <CopyOutlined style={{ color: "#5c5b5b" }} />
+        </button>
+      </div>
+
       {isTemplateModalVisible && (
         <div
           className="absolute left-full top-5 z-10 bg-white p-2 w-64 rounded-lg shadow-md"
