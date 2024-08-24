@@ -148,7 +148,7 @@ function CategoryFooter({
             >
               <CloseOutlined style={{ color: "#5c5b5b" }} />
             </button>
-            <div className="flex flex-col justify-center items-center gap-2 w-full mt-2">
+            <div className="flex flex-col items-center gap-2 w-full mt-2 max-h-72 overflow-y-scroll">
               {templateCardList.length > 0 ? (
                 templateCardList.map((card) => (
                   <div
