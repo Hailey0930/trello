@@ -12,7 +12,7 @@ function CategoryFooter({ onSaveCard }: CategoryFooterProps) {
 
   useClickOutside(setIsAddingCard, addCardRef);
 
-  const handleAddCard = async () => {
+  const handleAddCardButtonClick = async () => {
     setIsAddingCard(true);
   };
 
@@ -32,7 +32,7 @@ function CategoryFooter({ onSaveCard }: CategoryFooterProps) {
       <button
         type="button"
         className="flex items-center gap-2 text-sm bg-sky-300 text-white px-2 py-1 rounded-lg hover:bg-sky-400"
-        onClick={handleAddCard}
+        onClick={handleAddCardButtonClick}
       >
         <PlusOutlined />
         <div> Add Card</div>
