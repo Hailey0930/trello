@@ -34,11 +34,11 @@ function CategoryFooter({
   useClickOutside(setIsSelectingTemplate, selectTemplateRef);
   useClickOutside(setIsCreatingTemplate, templateTitleRef);
 
-  const handleAddCard = async () => {
+  const handleAddCardButtonClick = async () => {
     setIsAddingCard(true);
   };
 
-  const handleSaveCard = async () => {
+  const handleSaveCardClick = async () => {
     await onSaveCard(newCardTitle);
     setIsAddingCard(false);
     setNewCardTitle("");
@@ -103,7 +103,7 @@ function CategoryFooter({
             <button
               type="button"
               className="bg-emerald-400 text-white rounded-lg px-2 py-1 font-semibold"
-              onClick={handleSaveCard}
+              onClick={handleSaveCardClick}
             >
               Save
             </button>
@@ -121,7 +121,7 @@ function CategoryFooter({
         <button
           type="button"
           className="flex items-center gap-2 text-sm bg-sky-300 text-white px-2 py-1 rounded-lg hover:bg-sky-400"
-          onClick={handleAddCard}
+          onClick={handleAddCardButtonClick}
         >
           <PlusOutlined />
           <div> Add Card</div>
