@@ -16,7 +16,7 @@ function CategoryFooter({ onSaveCard }: CategoryFooterProps) {
     setIsAddingCard(true);
   };
 
-  const handleSaveCard = async () => {
+  const handleSaveCardClick = async () => {
     await onSaveCard(newCardTitle);
     setIsAddingCard(false);
     setNewCardTitle("");
@@ -49,7 +49,7 @@ function CategoryFooter({ onSaveCard }: CategoryFooterProps) {
             <button
               type="button"
               className="bg-emerald-400 text-white rounded-lg px-2 py-1 font-semibold"
-              onClick={handleSaveCard}
+              onClick={handleSaveCardClick}
             >
               Save
             </button>
