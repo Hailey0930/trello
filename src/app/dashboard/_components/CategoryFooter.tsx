@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 import {
   ArrowLeftOutlined,
   CloseOutlined,
@@ -158,6 +156,13 @@ function CategoryFooter({
                     className="w-full"
                     key={card.id}
                     onClick={handleSelectTemplate}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        handleSelectTemplate();
+                      }
+                    }}
                   >
                     <Card title={card.title} type={card.type} />
                   </div>
