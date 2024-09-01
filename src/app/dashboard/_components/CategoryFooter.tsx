@@ -49,7 +49,7 @@ function CategoryFooter({
     setNewCardTitle("");
   };
 
-  const handleTemplate = () => {
+  const handleTemplateButtonClick = () => {
     setIsTemplateModalVisible(!isTemplateModalVisible);
     onGetTemplateCards(setTemplateCardList);
   };
@@ -129,7 +129,7 @@ function CategoryFooter({
         <button
           type="button"
           className=" rounded-full px-1 hover:bg-gray-200"
-          onClick={handleTemplate}
+          onClick={handleTemplateButtonClick}
         >
           <CopyOutlined style={{ color: "#5c5b5b" }} />
         </button>
