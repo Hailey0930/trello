@@ -1,11 +1,9 @@
-import { IDBPDatabase } from "idb";
 import { v4 as uuidv4 } from "uuid";
 import { Category } from "../_types/Category";
-import { TrelloDBSchema } from "./db";
-import { CATEGORY_STORE_NAME } from "../_constant/constants";
 import { Card } from "../_types/Card";
+import { db } from "./db";
 
-export interface CategoryRepository {
+export interface ICategoryRepository {
   getAll: () => Promise<Category[]>;
   add: (title: string, cards?: Card[]) => Promise<Category>;
   edit: (id: string, title: string) => Promise<Category>;
@@ -16,32 +14,28 @@ export interface CategoryRepository {
   updateAll: (categories: Category[]) => Promise<void>;
 }
 
-export class CategoryRepositoryImpl implements CategoryRepository {
-  constructor(private db: IDBPDatabase<TrelloDBSchema>) {
-    this.db = db;
-  }
-
-  getAll = async (): Promise<Category[]> => {
-    const allCategories = await this.db.getAll(CATEGORY_STORE_NAME);
+export const CategoryRepository: ICategoryRepository = {
+  getAll: async (): Promise<Category[]> => {
+    const allCategories = await db.category.toArray();
     return allCategories.sort((a, b) => a.order - b.order);
-  };
+  },
 
-  add = async (title: string, cards?: Card[]) => {
-    const categories = await this.getAll();
+  add: async (title: string, cards?: Card[]): Promise<Category> => {
+    const categories = await CategoryRepository.getAll();
     const newOrder = categories.length;
-    const newCategory = {
+    const newCategory: Category = {
       id: uuidv4(),
       title,
       order: newOrder,
       cards: cards || [],
     };
 
-    await this.db.add(CATEGORY_STORE_NAME, newCategory);
+    await db.category.add(newCategory);
     return newCategory;
-  };
+  },
 
-  edit = async (id: string, title: string) => {
-    const targetCategory = await this.db.get(CATEGORY_STORE_NAME, id);
+  edit: async (id: string, title: string): Promise<Category> => {
+    const targetCategory = await db.category.get(id);
 
     if (!targetCategory) {
       throw new Error(`Category : ${id} not found`);
@@ -52,28 +46,30 @@ export class CategoryRepositoryImpl implements CategoryRepository {
       title,
     };
 
-    await this.db.put(CATEGORY_STORE_NAME, editedCategory);
+    await db.category.put(editedCategory);
 
     return editedCategory;
-  };
+  },
 
-  remove = async (
+  remove: async (
     id: string,
     removeCardsByCategoryId: (categoryId: string) => Promise<void>,
-  ) => {
-    const targetCategory = await this.db.get(CATEGORY_STORE_NAME, id);
+  ): Promise<void> => {
+    const targetCategory = await db.category.get(id);
 
     if (!targetCategory) {
       throw new Error(`Category : ${id} not found`);
     }
 
-    await this.db.delete(CATEGORY_STORE_NAME, id);
-    removeCardsByCategoryId(id);
-  };
+    await db.category.delete(id);
+    await removeCardsByCategoryId(id);
+  },
 
-  updateAll = async (categories: Category[]) => {
-    await Promise.all(
-      categories.map((category) => this.db.put(CATEGORY_STORE_NAME, category)),
-    );
-  };
-}
+  updateAll: async (categories: Category[]): Promise<void> => {
+    await db.transaction("rw", db.category, async () => {
+      await Promise.all(
+        categories.map((category) => db.category.put(category)),
+      );
+    });
+  },
+};

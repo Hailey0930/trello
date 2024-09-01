@@ -10,16 +10,13 @@ import {
   Dispatch,
   SetStateAction,
   useCallback,
-  useContext,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
 import { CategoryProps } from "@/app/_types/Category";
-import { DBContext } from "@/app/DBProvider";
-import { CardRepositoryImpl } from "@/app/_data/cardRepository";
 import { Card as ICard } from "@/app/_types/Card";
+import { CardRepository } from "@/app/_data/cardRepository";
 import useClickOutside from "../_hooks/useClickOutside";
 import Card from "./Card";
 import useDragItem from "../_hooks/dnd/useDragItem";
@@ -64,22 +61,14 @@ function Category({
 
   const opacity = isDragging ? 0 : 1;
 
-  const dbInstance = useContext(DBContext);
-
-  const cardRepository = useMemo(() => {
-    return dbInstance ? new CardRepositoryImpl(dbInstance) : null;
-  }, [dbInstance]);
-
   const fetchCards = useCallback(async () => {
-    if (!cardRepository) return;
-
-    const categories = await cardRepository.getAll(category.id);
+    const categories = await CardRepository.getAll(category.id);
     setCardList(categories);
-  }, [cardRepository, category.id]);
+  }, [category.id]);
 
   useEffect(() => {
     fetchCards();
-  }, [dbInstance, fetchCards]);
+  }, [fetchCards]);
 
   const handleEdit = () => {
     setIsEditingTitle(true);
@@ -95,9 +84,7 @@ function Category({
   };
 
   const handleDelete = async () => {
-    if (!cardRepository) return;
-
-    await onDeleteCategory(category.id, cardRepository.removeCardsByCategoryId);
+    await onDeleteCategory(category.id, CardRepository.removeCardsByCategoryId);
   };
 
   const handleMore = () => {
@@ -143,25 +130,21 @@ function Category({
   };
 
   const onSaveCard = async (newCardTitle: string) => {
-    if (newCardTitle.trim() === "" || !cardRepository) return;
+    if (newCardTitle.trim() === "") return;
 
-    await cardRepository.add(newCardTitle, category.id);
+    await CardRepository.add(newCardTitle, category.id);
     fetchCards();
   };
 
   const onGetTemplateCards = async (
     setTemplateCardList: Dispatch<SetStateAction<ICard[]>>,
   ) => {
-    if (!cardRepository) return;
-
-    const templateCards = await cardRepository.getTemplateCards();
+    const templateCards = await CardRepository.getTemplateCards(category.id);
     setTemplateCardList(templateCards);
   };
 
   const onAddTemplateCard = async (title: string) => {
-    if (!cardRepository) return;
-
-    await cardRepository.addTemplateCard(title, category.id);
+    await CardRepository.addTemplateCard(title, category.id);
     fetchCards();
   };
 

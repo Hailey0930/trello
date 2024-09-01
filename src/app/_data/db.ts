@@ -1,38 +1,23 @@
-import { Card } from "@/app/_types/Card";
-import { Category } from "@/app/_types/Category";
-import { DBSchema, IDBPDatabase, openDB } from "idb";
-import {
-  CARD_STORE_NAME,
-  CATEGORY_STORE_NAME,
-} from "@/app/_constant/constants";
+import Dexie, { type EntityTable } from "dexie";
+import { Category } from "../_types/Category";
+import { Card } from "../_types/Card";
 
-export const DB_NAME = "trelloDB";
-
-export interface TrelloDBSchema extends DBSchema {
-  [CATEGORY_STORE_NAME]: {
-    key: string;
-    value: Category;
-    indexes: { "by-title": string };
-  };
-  [CARD_STORE_NAME]: {
-    key: string;
-    value: Card;
-    indexes: { "by-categoryId": string };
-  };
-}
-
-export const initializeDB = async (
-  storeNames: (typeof CATEGORY_STORE_NAME | typeof CARD_STORE_NAME)[],
-): Promise<IDBPDatabase<TrelloDBSchema>> => {
-  const initializedDB = await openDB<TrelloDBSchema>(DB_NAME, 2, {
-    upgrade(db) {
-      storeNames.forEach((storeName) => {
-        if (!db.objectStoreNames.contains(storeName)) {
-          db.createObjectStore(storeName, { keyPath: "id" });
-        }
-      });
-    },
-  });
-
-  return initializedDB;
+const db = new Dexie("TrelloDatabase") as Dexie & {
+  category: EntityTable<
+    Category,
+    "id" // primary key "id" (for the typings only)
+  >;
+  card: EntityTable<
+    Card,
+    "id" // primary key "id" (for the typings only)
+  >;
 };
+
+// Schema declaration:
+db.version(1).stores({
+  category: "++id, title, order, cards", // primary key "id" (for the runtime!)
+  card: "++id, title, type, order, categoryId", // primary key "id" (for the runtime!)
+});
+
+export type { Category, Card };
+export { db };
