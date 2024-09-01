@@ -12,17 +12,17 @@ export interface ICardRepository {
 
 export const CardRepository: ICardRepository = {
   getAll: async (categoryId: string): Promise<Card[]> => {
-    const allCards = await db.card.toArray();
-    const filteredCards = allCards.filter(
-      (card) => card.categoryId === categoryId,
-    );
-    return filteredCards.sort((a, b) => a.order - b.order);
+    const allCardsWithCategoryId = await db.card
+      .where({ categoryId })
+      .toArray();
+    return allCardsWithCategoryId.sort((a, b) => a.order - b.order);
   },
 
   getTemplateCards: async (): Promise<Card[]> => {
-    const allCards = await db.card.toArray();
-    const filteredCards = allCards.filter((card) => card.type === "template");
-    return filteredCards.sort((a, b) => a.order - b.order);
+    const allCardsWithTemplateType = await db.card
+      .where({ type: "template" })
+      .toArray();
+    return allCardsWithTemplateType.sort((a, b) => a.order - b.order);
   },
 
   add: async (title: string, categoryId: string): Promise<Card> => {
