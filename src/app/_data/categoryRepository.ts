@@ -9,7 +9,10 @@ export interface CategoryRepository {
   getAll: () => Promise<Category[]>;
   add: (title: string, cards?: Card[]) => Promise<Category>;
   edit: (id: string, title: string) => Promise<Category>;
-  remove: (id: string) => Promise<void>;
+  remove: (
+    id: string,
+    removeCardsByCategoryId: (categoryId: string) => Promise<void>,
+  ) => Promise<void>;
   updateAll: (categories: Category[]) => Promise<void>;
 }
 
@@ -54,7 +57,10 @@ export class CategoryRepositoryImpl implements CategoryRepository {
     return editedCategory;
   };
 
-  remove = async (id: string) => {
+  remove = async (
+    id: string,
+    removeCardsByCategoryId: (categoryId: string) => Promise<void>,
+  ) => {
     const targetCategory = await this.db.get(CATEGORY_STORE_NAME, id);
 
     if (!targetCategory) {
@@ -62,6 +68,7 @@ export class CategoryRepositoryImpl implements CategoryRepository {
     }
 
     await this.db.delete(CATEGORY_STORE_NAME, id);
+    removeCardsByCategoryId(id);
   };
 
   updateAll = async (categories: Category[]) => {

@@ -7,6 +7,8 @@ import {
 import { Input, Select } from "antd";
 import {
   ChangeEvent,
+  Dispatch,
+  SetStateAction,
   useCallback,
   useContext,
   useEffect,
@@ -93,7 +95,9 @@ function Category({
   };
 
   const handleDelete = async () => {
-    await onDeleteCategory(category.id);
+    if (!cardRepository) return;
+
+    await onDeleteCategory(category.id, cardRepository.removeCardsByCategoryId);
   };
 
   const handleMore = () => {
@@ -142,6 +146,22 @@ function Category({
     if (newCardTitle.trim() === "" || !cardRepository) return;
 
     await cardRepository.add(newCardTitle, category.id);
+    fetchCards();
+  };
+
+  const onGetTemplateCards = async (
+    setTemplateCardList: Dispatch<SetStateAction<ICard[]>>,
+  ) => {
+    if (!cardRepository) return;
+
+    const templateCards = await cardRepository.getTemplateCards();
+    setTemplateCardList(templateCards);
+  };
+
+  const onAddTemplateCard = async (title: string) => {
+    if (!cardRepository) return;
+
+    await cardRepository.addTemplateCard(title, category.id);
     fetchCards();
   };
 
@@ -272,7 +292,11 @@ function Category({
           ))}
         </div>
       </div>
-      <CategoryFooter onSaveCard={onSaveCard} />
+      <CategoryFooter
+        onSaveCard={onSaveCard}
+        onGetTemplateCards={onGetTemplateCards}
+        onAddTemplateCard={onAddTemplateCard}
+      />
     </div>
   );
 }
