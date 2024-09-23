@@ -10,6 +10,7 @@ import { Category as ICategory } from "../_types/Category";
 import useClickOutside from "./_hooks/useClickOutside";
 import reorderCategories from "./_util/reorderCategories";
 import { CategoryRepository } from "../_data/categoryRepository";
+import DashboardHeader from "./_components/DashboardHeader";
 
 function DashboardPage() {
   const [categoryList, setCategoryList] = useState<ICategory[]>([]);
@@ -78,9 +79,7 @@ function DashboardPage() {
 
   return (
     <div className="min-h-screen dark:bg-slate-900">
-      <header className="h-14 bg-sky-400 flex items-center pl-5 text-white dark:bg-sky-900">
-        <div>Dashboard</div>
-      </header>
+      <DashboardHeader />
       <DndProvider backend={HTML5Backend}>
         <div className="p-3 flex gap-2">
           {categoryList.map((category, index) => (
