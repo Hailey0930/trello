@@ -17,6 +17,7 @@ import {
 import { CategoryProps } from "@/app/_types/Category";
 import { Card as ICard } from "@/app/_types/Card";
 import { CardRepository } from "@/app/_data/cardRepository";
+import { useTheme } from "next-themes";
 import useClickOutside from "../_hooks/useClickOutside";
 import Card from "./Card";
 import useDragItem from "../_hooks/dnd/useDragItem";
@@ -54,6 +55,8 @@ function Category({
   useClickOutside(setIsMoreVisible, moreModalRef);
   useClickOutside(setIsCopyModalVisible, copyModalRef);
   useClickOutside(setIsMoveModalVisible, moveModalRef, isDropdownOpen);
+
+  const { theme } = useTheme();
 
   const { isDragging, drag } = useDragItem("category", category.id, index);
   const { handlerId, drop } = useDropItem(dragRef, index, onDragCategory);
@@ -176,7 +179,9 @@ function Category({
               className="rounded-full px-1 hover:bg-gray-200"
               onClick={handleEditFinish}
             >
-              <CheckOutlined style={{ color: "#5c5b5b" }} />
+              <CheckOutlined
+                style={{ color: theme === "light" ? "#5c5b5b" : "#ffffff" }}
+              />
             </button>
           ) : (
             <button
@@ -184,7 +189,9 @@ function Category({
               className="rounded-full px-1 hover:bg-gray-200"
               onClick={handleEdit}
             >
-              <EditOutlined style={{ color: "#5c5b5b" }} />
+              <EditOutlined
+                style={{ color: theme === "light" ? "#5c5b5b" : "#ffffff" }}
+              />
             </button>
           )}
           <button
@@ -192,7 +199,9 @@ function Category({
             className="rounded-full px-1 hover:bg-gray-200"
             onClick={handleDelete}
           >
-            <DeleteOutlined style={{ color: "#5c5b5b" }} />
+            <DeleteOutlined
+              style={{ color: theme === "light" ? "#5c5b5b" : "#ffffff" }}
+            />
           </button>
           <div className="relative" ref={moreModalRef}>
             <button
@@ -200,7 +209,9 @@ function Category({
               className="rounded-full px-1 hover:bg-gray-200"
               onClick={handleMore}
             >
-              <MoreOutlined style={{ color: "#5c5b5b" }} />
+              <MoreOutlined
+                style={{ color: theme === "light" ? "#5c5b5b" : "#ffffff" }}
+              />
             </button>
             {isMoreVisible && (
               <div className="absolute left-0 top-7 bg-white p-2 w-28 rounded-lg shadow-md">

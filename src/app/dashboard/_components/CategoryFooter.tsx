@@ -8,6 +8,7 @@ import { Input } from "antd";
 import { useRef, useState } from "react";
 import { CategoryFooterProps } from "@/app/_types/Category";
 import { Card as ICard } from "@/app/_types/Card";
+import { useTheme } from "next-themes";
 import useClickOutside from "../_hooks/useClickOutside";
 import Card from "./Card";
 
@@ -33,6 +34,8 @@ function CategoryFooter({
   useClickOutside(setIsTemplateModalVisible, templateModalRef);
   useClickOutside(setIsSelectingTemplate, selectTemplateRef);
   useClickOutside(setIsCreatingTemplate, templateTitleRef);
+
+  const { theme } = useTheme();
 
   const handleAddCardButtonClick = async () => {
     setIsAddingCard(true);
@@ -132,7 +135,9 @@ function CategoryFooter({
           className=" rounded-full px-1 hover:bg-gray-200"
           onClick={handleTemplateButtonClick}
         >
-          <CopyOutlined style={{ color: "#5c5b5b" }} />
+          <CopyOutlined
+            style={{ color: theme === "light" ? "#5c5b5b" : "#ffffff" }}
+          />
         </button>
       </div>
 
@@ -148,7 +153,9 @@ function CategoryFooter({
               className="absolute right-0 top-0 rounded-full px-1 hover:bg-gray-200"
               onClick={handleCloseTemplateModal}
             >
-              <CloseOutlined style={{ color: "#5c5b5b" }} />
+              <CloseOutlined
+                style={{ color: theme === "light" ? "#5c5b5b" : "#ffffff" }}
+              />
             </button>
             <div className="flex flex-col items-center gap-2 w-full mt-2 max-h-72 overflow-y-scroll">
               {templateCardList.length > 0 ? (
@@ -201,7 +208,11 @@ function CategoryFooter({
                     className="rounded-full px-1 hover:bg-gray-200 dark:hover:bg-slate-700"
                     onClick={handleCancelCreateCard}
                   >
-                    <CloseOutlined style={{ color: "#5c5b5b" }} />
+                    <CloseOutlined
+                      style={{
+                        color: theme === "light" ? "#5c5b5b" : "#ffffff",
+                      }}
+                    />
                   </button>
                 </div>
               </div>
@@ -211,7 +222,9 @@ function CategoryFooter({
               className="flex items-center justify-center gap-2 mt-2 w-full px-1 hover:bg-gray-200 dark:hover:bg-slate-700"
               onClick={handleCreateCard}
             >
-              <PlusOutlined style={{ color: "#5c5b5b" }} />
+              <PlusOutlined
+                style={{ color: theme === "light" ? "#5c5b5b" : "#ffffff" }}
+              />
               Create a new template
             </button>
           </div>
@@ -229,7 +242,9 @@ function CategoryFooter({
                 className="rounded-full px-1 hover:bg-gray-200"
                 onClick={handleBackToTemplate}
               >
-                <ArrowLeftOutlined style={{ color: "#5c5b5b" }} />
+                <ArrowLeftOutlined
+                  style={{ color: theme === "light" ? "#5c5b5b" : "#ffffff" }}
+                />
               </button>
               <h1 className="font-semibold">Create card</h1>
               <button
@@ -237,7 +252,9 @@ function CategoryFooter({
                 className="rounded-full px-1 hover:bg-gray-200"
                 onClick={handleCloseSelectTemplate}
               >
-                <CloseOutlined style={{ color: "#5c5b5b" }} />
+                <CloseOutlined
+                  style={{ color: theme === "light" ? "#5c5b5b" : "#ffffff" }}
+                />
               </button>
             </div>
             <Input type="text" placeholder="Card name" />
