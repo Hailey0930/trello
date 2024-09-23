@@ -12,6 +12,7 @@ const cardFactory = new FixtureFactory<Card>(() => {
     title: faker.word.words(),
     type: randomType,
     order: 0,
+    categoryId: faker.string.uuid(),
   };
 });
 

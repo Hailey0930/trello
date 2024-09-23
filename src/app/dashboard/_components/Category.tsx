@@ -2,7 +2,6 @@ import {
   CheckOutlined,
   DeleteOutlined,
   EditOutlined,
-  PlusOutlined,
   MoreOutlined,
 } from "@ant-design/icons";
 import { Input, Select } from "antd";
@@ -23,6 +22,7 @@ import useClickOutside from "../_hooks/useClickOutside";
 import Card from "./Card";
 import useDragItem from "../_hooks/dnd/useDragItem";
 import useDropItem from "../_hooks/dnd/useDropItem";
+import CategoryFooter from "./CategoryFooter";
 
 function Category({
   index,
@@ -71,9 +71,9 @@ function Category({
   const fetchCards = useCallback(async () => {
     if (!cardRepository) return;
 
-    const categories = await cardRepository.getAll();
+    const categories = await cardRepository.getAll(category.id);
     setCardList(categories);
-  }, [cardRepository]);
+  }, [cardRepository, category.id]);
 
   useEffect(() => {
     fetchCards();
@@ -136,6 +136,13 @@ function Category({
     }
 
     setIsMoveModalVisible(false);
+  };
+
+  const onSaveCard = async (newCardTitle: string) => {
+    if (newCardTitle.trim() === "" || !cardRepository) return;
+
+    await cardRepository.add(newCardTitle, category.id);
+    fetchCards();
   };
 
   return (
@@ -265,15 +272,7 @@ function Category({
           ))}
         </div>
       </div>
-      <footer className="p-2">
-        <button
-          type="button"
-          className="flex items-center gap-2 text-sm bg-sky-300 text-white px-2 py-1 rounded-lg hover:bg-sky-400"
-        >
-          <PlusOutlined />
-          <div> Add Card</div>
-        </button>
-      </footer>
+      <CategoryFooter onSaveCard={onSaveCard} />
     </div>
   );
 }

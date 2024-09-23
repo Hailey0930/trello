@@ -16,3 +16,7 @@ export interface CategoryProps {
   onCopyCategory: (id: string, newTitle: string) => Promise<void>;
   categoryCount: number;
 }
+
+export interface CategoryFooterProps {
+  onSaveCard: (title: string) => Promise<void>;
+}
