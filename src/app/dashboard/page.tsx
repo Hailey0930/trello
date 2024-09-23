@@ -1,47 +1,31 @@
 "use client";
 
 import { Input } from "antd";
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { CategoryRepositoryImpl } from "../_data/categoryRepository";
 import Category from "./_components/Category";
 import { Category as ICategory } from "../_types/Category";
 import useClickOutside from "./_hooks/useClickOutside";
-import { DBContext } from "../DBProvider";
 import reorderCategories from "./_util/reorderCategories";
+import { CategoryRepository } from "../_data/categoryRepository";
 
 function DashboardPage() {
   const [categoryList, setCategoryList] = useState<ICategory[]>([]);
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [newCategoryTitle, setNewCategoryTitle] = useState("");
 
-  const dbInstance = useContext(DBContext);
-
   const addCategoryBoxRef = useRef<HTMLDivElement>(null);
 
-  const categoryRepository = useMemo(() => {
-    return dbInstance ? new CategoryRepositoryImpl(dbInstance) : null;
-  }, [dbInstance]);
-
   const fetchCategories = useCallback(async () => {
-    if (!categoryRepository) return;
-
-    const categories = await categoryRepository.getAll();
+    const categories = await CategoryRepository.getAll();
     setCategoryList(categories);
-  }, [categoryRepository]);
+  }, []);
 
   useEffect(() => {
     fetchCategories();
-  }, [dbInstance, fetchCategories]);
+  }, [fetchCategories]);
 
   useClickOutside(setIsAddingCategory, addCategoryBoxRef);
 
@@ -50,18 +34,16 @@ function DashboardPage() {
   };
 
   const handleSaveCategory = async () => {
-    if (newCategoryTitle.trim() === "" || !categoryRepository) return;
+    if (newCategoryTitle.trim() === "") return;
 
-    await categoryRepository.add(newCategoryTitle);
+    await CategoryRepository.add(newCategoryTitle);
     fetchCategories();
     setIsAddingCategory(false);
     setNewCategoryTitle("");
   };
 
   const onEditCategory = async (id: string, title: string) => {
-    if (!categoryRepository) return;
-
-    await categoryRepository.edit(id, title);
+    await CategoryRepository.edit(id, title);
     fetchCategories();
   };
 
@@ -69,14 +51,12 @@ function DashboardPage() {
     id: string,
     removeCardsByCategoryId: (categoryId: string) => Promise<void>,
   ) => {
-    if (!categoryRepository) return;
-
-    await categoryRepository.remove(id, removeCardsByCategoryId);
+    await CategoryRepository.remove(id, removeCardsByCategoryId);
     fetchCategories();
   };
 
   const onDragCategory = async (startIndex: number, endIndex: number) => {
-    if (!categoryRepository) return;
+    if (!CategoryRepository) return;
 
     const reorderedCategoryList = reorderCategories(
       categoryList,
@@ -85,14 +65,14 @@ function DashboardPage() {
     );
 
     setCategoryList(reorderedCategoryList);
-    await categoryRepository.updateAll(reorderedCategoryList);
+    await CategoryRepository.updateAll(reorderedCategoryList);
   };
 
   const onCopyCategory = async (id: string, newTitle: string) => {
     const categoryToCopy = categoryList.find((category) => category.id === id);
-    if (!categoryToCopy || !categoryRepository) return;
+    if (!categoryToCopy) return;
 
-    await categoryRepository.add(newTitle, categoryToCopy.cards);
+    await CategoryRepository.add(newTitle, categoryToCopy.cards);
     fetchCategories();
   };
 
