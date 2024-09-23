@@ -153,7 +153,7 @@ function Category({
       ref={dragRef}
       style={{ opacity }}
       data-handler-id={handlerId}
-      className="w-272 h-fit bg-gray-100 rounded-lg p-2 cursor-pointer"
+      className="w-272 h-fit bg-gray-100 rounded-lg p-2 cursor-pointer dark:bg-slate-500 dark:text-white"
     >
       <div
         className="flex items-center justify-between"
@@ -164,6 +164,7 @@ function Category({
             autoFocus
             onChange={handleInputChange}
             value={newCategoryTitle}
+            className="dark:bg-slate-600 dark:text-white dark:border-slate-600 dark:placeholder-white"
           />
         ) : (
           <h1 className="font-medium px-2">{category.title}</h1>

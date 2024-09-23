@@ -77,12 +77,12 @@ function DashboardPage() {
   };
 
   return (
-    <div>
-      <header className="h-14 bg-sky-400 flex items-center pl-5 text-white">
+    <div className="min-h-screen dark:bg-slate-900">
+      <header className="h-14 bg-sky-400 flex items-center pl-5 text-white dark:bg-sky-900">
         <div>Dashboard</div>
       </header>
       <DndProvider backend={HTML5Backend}>
-        <div className="p-3 flex gap-2 ">
+        <div className="p-3 flex gap-2">
           {categoryList.map((category, index) => (
             <Category
               key={category.id}
@@ -99,7 +99,7 @@ function DashboardPage() {
           {isAddingCategory ? (
             <div
               ref={addCategoryBoxRef}
-              className="w-272 bg-gray-100 rounded-lg flex flex-col justify-center items-center gap-1"
+              className="w-272 bg-gray-100 rounded-lg flex flex-col justify-center items-center gap-1  dark:bg-slate-500 dark:text-white"
             >
               <h1 className="font-semibold">Add category</h1>
               <Input
@@ -107,6 +107,7 @@ function DashboardPage() {
                 autoFocus
                 onChange={handleInputChange}
                 value={newCategoryTitle}
+                className="dark:bg-slate-600 dark:text-white dark:border-slate-600 dark:placeholder-white"
               />
               <div className="flex items-center gap-2">
                 <button
@@ -128,7 +129,7 @@ function DashboardPage() {
           ) : (
             <div className="w-272 h-10 bg-gray-100 rounded-lg">
               <button
-                className="w-full h-full bg-gray-100 rounded-lg p-2 flex justify-center items-center hover:bg-gray-200 font-semibold gap-2"
+                className="w-full h-full bg-gray-100 rounded-lg p-2 flex justify-center items-center hover:bg-gray-200 font-semibold gap-2 dark:bg-slate-500 dark:text-white"
                 type="button"
                 onClick={() => setIsAddingCategory(true)}
               >

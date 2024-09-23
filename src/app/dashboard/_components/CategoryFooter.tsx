@@ -98,6 +98,7 @@ function CategoryFooter({
             autoFocus
             onChange={(e) => setNewCardTitle(e.target.value)}
             value={newCardTitle}
+            className="dark:bg-slate-600 dark:text-white dark:border-slate-600 dark:placeholder-white"
           />
           <div className="flex justify-center items-center gap-2">
             <button
@@ -120,7 +121,7 @@ function CategoryFooter({
       <div className="flex justify-between w-full">
         <button
           type="button"
-          className="flex items-center gap-2 text-sm bg-sky-300 text-white px-2 py-1 rounded-lg hover:bg-sky-400"
+          className="flex items-center gap-2 text-sm bg-sky-300 text-white px-2 py-1 rounded-lg hover:bg-sky-400 dark:bg-slate-700 dark:text-white"
           onClick={handleAddCardButtonClick}
         >
           <PlusOutlined />
@@ -137,7 +138,7 @@ function CategoryFooter({
 
       {isTemplateModalVisible && (
         <div
-          className="absolute left-full top-5 z-10 bg-white p-2 w-64 rounded-lg shadow-md"
+          className="absolute left-full top-5 z-10 bg-white p-2 w-64 rounded-lg shadow-md dark:bg-slate-600 dark:text-white"
           ref={templateModalRef}
         >
           <div className="relative flex flex-col justify-center items-center mb-5 gap-2">
@@ -185,18 +186,19 @@ function CategoryFooter({
                   autoFocus
                   value={newTemplateTitle}
                   onChange={(e) => setNewTemplateTitle(e.target.value)}
+                  className="dark:bg-slate-600 dark:text-white dark:border-slate-700 dark:placeholder-white"
                 />
                 <div className="flex gap-2 item-center">
                   <button
                     type="button"
-                    className="flex justify-center items-center text-sm bg-sky-300 text-white px-2 py-1 rounded-lg hover:bg-sky-400"
+                    className="flex justify-center items-center text-sm bg-sky-300 text-white px-2 py-1 rounded-lg hover:bg-sky-400 dark:bg-slate-700 dark:text-white"
                     onClick={handleAddTemplateCard}
                   >
                     Add
                   </button>
                   <button
                     type="button"
-                    className="rounded-full px-1 hover:bg-gray-200"
+                    className="rounded-full px-1 hover:bg-gray-200 dark:hover:bg-slate-700"
                     onClick={handleCancelCreateCard}
                   >
                     <CloseOutlined style={{ color: "#5c5b5b" }} />
@@ -206,7 +208,7 @@ function CategoryFooter({
             )}
             <button
               type="button"
-              className="flex items-center justify-center gap-2 mt-2 w-full px-1 hover:bg-gray-200"
+              className="flex items-center justify-center gap-2 mt-2 w-full px-1 hover:bg-gray-200 dark:hover:bg-slate-700"
               onClick={handleCreateCard}
             >
               <PlusOutlined style={{ color: "#5c5b5b" }} />
