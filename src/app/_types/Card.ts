@@ -9,6 +9,7 @@ export interface Card {
 }
 
 export interface CardProps {
-  title: string;
-  type: CardType;
+  card: Card;
+  cardIndex: number;
+  onDragCard: (dragIndex: number, hoverIndex: number) => void;
 }

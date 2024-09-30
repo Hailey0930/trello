@@ -8,6 +8,7 @@ export interface ICardRepository {
   add: (title: string, categoryId: string) => Promise<Card>;
   addTemplateCard: (title: string, categoryId: string) => Promise<Card>;
   removeCardsByCategoryId: (categoryId: string) => Promise<void>;
+  updateAll: (cards: Card[]) => Promise<void>;
 }
 
 export const CardRepository: ICardRepository = {
@@ -58,5 +59,11 @@ export const CardRepository: ICardRepository = {
   removeCardsByCategoryId: async (categoryId: string): Promise<void> => {
     const allCards = await CardRepository.getAll(categoryId);
     await Promise.all(allCards.map((card) => db.card.delete(card.id)));
+  },
+
+  updateAll: async (cards: Card[]): Promise<void> => {
+    await db.transaction("rw", db.card, async () => {
+      await Promise.all(cards.map((card) => db.card.put(card)));
+    });
   },
 };

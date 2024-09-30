@@ -23,6 +23,7 @@ import Card from "./Card";
 import useDragItem from "../_hooks/dnd/useDragItem";
 import useDropItem from "../_hooks/dnd/useDropItem";
 import CategoryFooter from "./CategoryFooter";
+import reorderCards from "../_util/reorderCards";
 
 function Category({
   index,
@@ -149,6 +150,12 @@ function Category({
   const onAddTemplateCard = async (title: string) => {
     await CardRepository.addTemplateCard(title, category.id);
     fetchCards();
+  };
+
+  const onDragCard = async (startIndex: number, endIndex: number) => {
+    const reorderedCardList = reorderCards(cardList, startIndex, endIndex);
+    setCardList(reorderedCardList);
+    await CardRepository.updateAll(reorderedCardList);
   };
 
   return (
@@ -282,8 +289,13 @@ function Category({
       </div>
       <div className="py-1.5">
         <div className="flex flex-col gap-3">
-          {cardList.map((card) => (
-            <Card key={card.id} title={card.title} type={card.type} />
+          {cardList.map((card, cardIndex) => (
+            <Card
+              key={card.id}
+              card={card}
+              cardIndex={cardIndex}
+              onDragCard={onDragCard}
+            />
           ))}
         </div>
       </div>
